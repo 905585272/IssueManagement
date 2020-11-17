@@ -2,7 +2,6 @@
   <div class="container">
     <div class="text-center jumbotron">
       <h1>注册界面</h1>
-      <h2>123</h2>
     </div>
     <div class="content text-center">
       <form class="form-group">
