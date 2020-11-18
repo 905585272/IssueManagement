@@ -11,6 +11,7 @@
                 </el-form-item>
                 <el-form-item label="姓名：" prop="name" class="col-md-8">
                     <el-input v-model="ruleForm.name" ></el-input>
+                    <!-- onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\u4E00-\u9FA5]/g,''))"  -->
                 </el-form-item>
                 <el-form-item label="邮箱：" prop="email" class="col-md-8">
                     <el-input v-model="ruleForm.email" type="email"></el-input>
@@ -32,12 +33,10 @@
 <style>
     .el-form-item{
         margin:0 auto;
+        text-align: center;
     }
     #change_body{
         margin:15% auto;
-    }
-    .change_info{
-        margin: 20px;
     }
 </style>
 
@@ -55,15 +54,25 @@
                  if (value === '') {
                 callback(new Error('请正确填写邮箱'));
                 } else {
-                if (value !== '') { 
-                var reg=/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-                if(!reg.test(value)){
-                callback(new Error('请输入有效的邮箱'));
-            }
-          }
-          callback();
-        }
+                    if (value !== '') { 
+                    var reg=/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+                        if(!reg.test(value)){
+                        callback(new Error('请输入有效的邮箱'));
+                        }
+                    }
+                callback();
+                }
             };
+            var checkChinese = (rule, value, callback) => {
+                if (value) {
+                    if (!/^[\u2E80-\u9FFF]+$/.test(value)) {
+                    callback(new Error('请输入汉字!'));
+                    } else {
+                    callback();
+                    }
+                }
+                callback();
+            }
             return {
                 ruleForm:{
                     ID:'',
@@ -75,7 +84,8 @@
                 rules: {
                     name: [
                         { required: true, message: '请输入名字', trigger: 'blur' },
-                        { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+                        { min: 1, max: 20, message: '长度在 1 到 20 个汉字', trigger: 'blur' },
+                        { validator: checkChinese, trigger: 'blur' }
                     ],
                     email: [
                         { required: true, message: '请输入邮箱', trigger: 'blur' },
