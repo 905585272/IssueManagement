@@ -5,11 +5,14 @@
       <h1>Issue管理系统</h1>
    </div>
    <div class="row">
-      <div class="enterPage col-md-6">
+      <div class="enterPage col-md-4">
         <router-link to="/enterpage"><h1>登录</h1></router-link>
       </div>
-      <div class="registerPage col-md-6">
+      <div class="registerPage col-md-4">
         <router-link to="/registerpage"><h1>注册</h1></router-link>
+      </div>
+      <div class="changePage col-md-4">
+        <router-link to="/changepage"><h1>修改信息</h1></router-link>
       </div>
   </div>
   </div>

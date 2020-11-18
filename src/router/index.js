@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import enterPage from "../components/enterPage.vue";
 import registerPage from "../components/registerPage.vue";
+import changePage from '../components/changePage.vue';
 import axios from 'axios';
 Vue.prototype.$axios = axios;
 
@@ -23,6 +24,11 @@ const routes = [{
         name: 'registerPage',
         component: registerPage
     },
+    {
+        path: '/changepage',
+        name: 'changePage',
+        component: changePage
+    }
 
 ];
 
