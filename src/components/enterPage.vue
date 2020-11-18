@@ -13,7 +13,7 @@
                     <el-input v-model="ruleForm.password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                <el-button type="primary">确认</el-button>
+                <el-button type="primary" @click="login()">确认</el-button>
                 </el-form-item>
             </el-form>
         </div>   
@@ -35,7 +35,8 @@ export default {
     return {
       ruleForm:{
                 ID:'',
-                password:''
+                password:'',
+                name:'',
             },
             rules: {
                 ID: [
@@ -49,6 +50,14 @@ export default {
             }
         }
     }, 
+    methods:{
+      login:function(){
+        this.$store.state.username = this.ruleForm.ID;
+        this.$store.state.enterable = false;
+        this.$store.state.entersuccess = true;
+        this.$router.go(-1);
+      }
+    }
 };
 </script>
 
