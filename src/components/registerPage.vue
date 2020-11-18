@@ -43,12 +43,25 @@
 <script>
     export default {
         data() {
+            var validatePass1 = (rule, value, callback) => {
+                if (value !== '') { 
+                    if (!/^(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*?[_\-@&=])[a-zA-Z_\-@&=]+.{8,30}$/.test(value)){
+                        callback(new Error('密码必须包含大小写和特殊字符(_-@&=)，且在8-30位之间'));
+                        }
+                    }
+                    else {
+                    callback();
+                    }
+                callback();
+            };
             var validatePass2 = (rule, value, callback) => {
                 if (value !== this.ruleForm.change_passwd) {
                 callback(new Error('两次输入密码不一致!'));
-                } else {
+                }
+                 else {
                 callback();
                 }
+                callback();
             };
             var checkEmail = (rule, value, callback) => {
                  if (value === '') {
@@ -98,7 +111,8 @@
                     ],
                     change_passwd: [
                         { required: true,message: '请输入密码',trigger: 'blur' },
-                        { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+                        { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
+                        { validator: validatePass1, trigger: 'blur' }
                     ],
                     final_passwd: [
                         { required: true,message: '请再次输入密码',trigger: 'blur' },

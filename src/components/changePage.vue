@@ -11,7 +11,6 @@
                 </el-form-item>
                 <el-form-item label="姓名：" prop="name" class="col-md-8">
                     <el-input v-model="ruleForm.name" ></el-input>
-                    <!-- onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\u4E00-\u9FA5]/g,''))"  -->
                 </el-form-item>
                 <el-form-item label="邮箱：" prop="email" class="col-md-8">
                     <el-input v-model="ruleForm.email" type="email"></el-input>
@@ -26,14 +25,13 @@
                 <el-button type="primary" @click="submitForm('ruleForm')">确认</el-button>
                 </el-form-item>
             </el-form>
-        </div>   
+        </div> 
     </div>
 </template>
 
 <style>
     .el-form-item{
         margin:0 auto;
-        text-align: center;
     }
     #change_body{
         margin:15% auto;
@@ -43,12 +41,25 @@
 <script>
     export default {
         data() {
+            var validatePass1 = (rule, value, callback) => {
+                if (value !== '') { 
+                    if (!/^(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*?[_\-@&=])[a-zA-Z_\-@&=]+.{8,30}$/.test(value)){
+                        callback(new Error('密码必须包含大小写和特殊字符(_-@&=)，且在8-30位之间'));
+                        }
+                    }
+                    else {
+                    callback();
+                    }
+                callback();
+            };
             var validatePass2 = (rule, value, callback) => {
                 if (value !== this.ruleForm.change_passwd) {
                 callback(new Error('两次输入密码不一致!'));
-                } else {
+                }
+                 else {
                 callback();
                 }
+                callback();
             };
             var checkEmail = (rule, value, callback) => {
                  if (value === '') {
@@ -84,7 +95,7 @@
                 rules: {
                     name: [
                         { required: true, message: '请输入名字', trigger: 'blur' },
-                        { min: 1, max: 20, message: '长度在 1 到 20 个汉字', trigger: 'blur' },
+                        { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
                         { validator: checkChinese, trigger: 'blur' }
                     ],
                     email: [
@@ -94,7 +105,8 @@
                     ],
                     change_passwd: [
                         { required: true,message: '请输入密码',trigger: 'blur' },
-                        { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+                        { min: 8, max: 30, message: '长度在 8 到 30 个字符', trigger: 'blur' },
+                        { validator: validatePass1, trigger: 'blur' }
                     ],
                     final_passwd: [
                         { required: true,message: '请再次输入密码',trigger: 'blur' },
@@ -104,11 +116,14 @@
             }
         }, 
         methods: {
+            
             submitForm(formName) {
+                const _this = this;
+                
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        console.log(this.change_passwd);
-                        console.log(this.final_passwd);
+                        console.log(_this.ruleForm.change_passwd);
+                        console.log(_this.ruleForm.change_passwd);
                         alert('submit!');
                     } else {
                         alert('error submit!!');
