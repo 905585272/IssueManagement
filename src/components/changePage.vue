@@ -6,17 +6,17 @@
         </div>
         <div id="change_body">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-                <el-form-item label="登录ID：" prop="id" class="col-md-8" id="user_id">
-                    <el-input v-model="ruleForm.id" disabled="disabled"></el-input>
+                <el-form-item label="登录ID：" prop="rId" class="col-md-8">
+                    <el-input v-model="ruleForm.rId" disabled="disabled"></el-input>
                 </el-form-item>
-                <el-form-item label="姓名：" prop="name" class="col-md-8">
-                    <el-input v-model="ruleForm.name" ></el-input>
+                <el-form-item label="姓名：" prop="rName" class="col-md-8">
+                    <el-input v-model="ruleForm.rName" ></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱：" prop="email" class="col-md-8">
-                    <el-input v-model="ruleForm.email" type="email"></el-input>
+                <el-form-item label="邮箱：" prop="rEmail" class="col-md-8">
+                    <el-input v-model="ruleForm.rEmail" type="email"></el-input>
                 </el-form-item>
-                <el-form-item label="修改密码：" prop="change_passwd" class="col-md-8">
-                    <el-input v-model="ruleForm.change_passwd" show-password></el-input>
+                <el-form-item label="修改密码：" prop="rPwd" class="col-md-8">
+                    <el-input v-model="ruleForm.rPwd" show-password></el-input>
                 </el-form-item>
                 <el-form-item label="确认密码：" prop="final_passwd" class="col-md-8">
                     <el-input v-model="ruleForm.final_passwd" show-password></el-input>
@@ -54,7 +54,7 @@
                 callback();
             };
             var validatePass2 = (rule, value, callback) => {
-                if (value !== this.ruleForm.change_passwd) {
+                if (value !== this.ruleForm.rPwd) {
                 callback(new Error('两次输入密码不一致!'));
                 }
                  else {
@@ -117,18 +117,59 @@
             }
         }, 
         methods: {
-            
             submitForm(ruleForm) {
                 this.$refs[ruleForm].validate((valid) => {
+                    console.log("data is posting!");
                     if (valid) {
                         console.log(this.ruleForm.rId);
-                        console.log(this.ruleForm.change_passwd);
-                        alert('submit!');
+                        this.$http.get('http://localhost:8080/user/selectall').
+                        then(function(res){
+                            this.msg = res.body;
+                            console.log(this.msg);
+                            var flag=true;
+                            this.msg.forEach(item=>{
+                                console.log(this.ruleForm.rName);
+                               if(item.rName==this.ruleForm.rName){
+                                   flag = false;
+                                   this.$alert('姓名与ID不同！',{
+                                       confirmButtonText: '确定',
+                                   })
+                               }
+                            });
+                               if (flag) {
+                                this.$http.post('http://localhost:8080/user/insert',{
+                                rId:this.ruleForm.rId,
+                                rName:this.ruleForm.rName,
+                                rEmail:this.ruleForm.rEmail,
+                                rPwd:this.ruleForm.rPwd,
+                            }).then(function(resp){
+                                console.log(resp);
+                                // this.$store.state.username = this.ruleForm.rName;
+                                // this.$store.state.enterable = false;
+                                // this.$store.state.entersuccess = true;
+                                // this.$store.state.registerable = false;
+                                // this.$store.state.createissue = true;
+                                // this.$store.state.issuereport = true;
+                                // this.$store.state.changeable = true;
+                                this.$alert('用户信息修改成功！', {
+                                    confirmButtonText: '确定',
+                                }).then(() => {
+                                        this.$router.go(-1);
+                                    })
+                            }).catch(function(error){
+                                console.log(error);
+                            })
+                               }
+                        }).catch(function(error){
+                            console.log(error);
+                        })
+                       
                     } else {
                         alert('error submit!!');
                     }
+                        
                 });
-            }
+            },
         }
     };
 </script>
