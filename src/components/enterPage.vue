@@ -6,14 +6,14 @@
         </div>
         <div id="change_body">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-                <el-form-item label="系统ID：" prop="rId" class="col-md-8">
+                <el-form-item label="系统ID：" prop="rId" class="col-md-8" id="user_id">
                     <el-input v-model="ruleForm.rId"></el-input>
                 </el-form-item>
                 <el-form-item label="输入密码：" prop="rPwd" class="col-md-8">
                     <el-input v-model="ruleForm.rPwd"></el-input>
                 </el-form-item>
                 <el-form-item>
-                <el-button type="primary" @click="login()">确认</el-button>
+                <el-button type="primary" @click="submitForm('ruleForm')">确认</el-button>
                 </el-form-item>
             </el-form>
         </div>   
@@ -52,17 +52,42 @@ export default {
         }
     }, 
     methods:{
-      login:function(){
-        this.$store.state.username = this.ruleForm.rName;
-        this.$store.state.enterable = false;
-        this.$store.state.entersuccess = true;
-        this.$store.state.registerable = false;
-        this.$store.state.createissue = true;
-        this.$store.state.issuereport = true;
-        this.$store.state.changeable = true;
-        this.$store.state.changeissue = true;
-        this.$router.go(-1);
-      }
-    }
+
+
+          submitForm(ruleForm) {
+                this.$refs[ruleForm].validate((valid) => {
+                   
+                    if (valid) {
+
+                        console.log(this.ruleForm.rId); 
+                        this.$http.get('http://localhost:8080/user/selectbyid/'+this.ruleForm.rId).
+                        then(function(res){
+                            console.log(res.data);
+                            if(res.data===1){ 
+                                alert("用户不存在！");
+                            }else{
+                                  
+                                  if(this.ruleForm.rPwd==res.data.rPwd){
+                                alert("登陆成功！");
+                                this.$store.state.username = this.ruleForm.rName;
+                                this.$router.go(-1);
+                            }
+                            else{
+                                alert("密码错误")
+                            }
+                            }
+                            })
+
+                        }
+                        
+                        else {
+                        alert('error submit!!');
+                    }
+                        })
+                       
+                    } 
+            },
 };
 </script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->

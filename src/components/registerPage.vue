@@ -44,8 +44,8 @@
         data() {
             var validatePass1 = (rule, value, callback) => {
                 if (value !== '') { 
-                    if (!/^(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*?[_\-@&=])[a-zA-Z_\-@&=]+.{8,30}$/.test(value)){
-                        callback(new Error('密码必须包含大小写和特殊字符(_-@&=)，且在8-30位之间'));
+                    if (!/^(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*?[_\-@&=!])[a-zA-Z_\-@&=!]+.{8,30}$/.test(value)){
+                        callback(new Error('密码必须包含大小写和特殊字符(_-@&=!)，且在8-30位之间'));
                         }
                     }
                     else {
