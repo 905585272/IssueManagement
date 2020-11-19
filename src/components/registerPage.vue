@@ -29,7 +29,7 @@
     </div>
 </template>
 
-<style>
+<style scoped>
     .el-form-item{
         margin:0 auto;
         text-align: center;
@@ -145,7 +145,16 @@
                                 rEmail:this.ruleForm.rEmail,
                                 rPwd:this.ruleForm.rPwd,
                             }).then(function(resp){
-                                console.log(resp)
+                                console.log(resp);
+                                alert('用户注册成功！');
+                                this.$store.state.username = this.ruleForm.rName;
+                                this.$store.state.enterable = false;
+                                this.$store.state.entersuccess = true;
+                                this.$store.state.registerable = false;
+                                this.$store.state.createissue = true;
+                                this.$store.state.issuereport = true;
+                                this.$store.state.changeable = true;
+                                this.$router.go(-1);
                             }).catch(function(error){
                                 console.log(error);
                             })

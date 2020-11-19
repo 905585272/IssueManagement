@@ -6,11 +6,11 @@
         </div>
         <div id="change_body">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-                <el-form-item label="系统ID：" prop="ID" class="col-md-8" id="user_id">
-                    <el-input v-model="ruleForm.ID"></el-input>
+                <el-form-item label="系统ID：" prop="rId" class="col-md-8">
+                    <el-input v-model="ruleForm.rId"></el-input>
                 </el-form-item>
-                <el-form-item label="输入密码：" prop="password" class="col-md-8">
-                    <el-input v-model="ruleForm.password"></el-input>
+                <el-form-item label="输入密码：" prop="rPwd" class="col-md-8">
+                    <el-input v-model="ruleForm.rPwd"></el-input>
                 </el-form-item>
                 <el-form-item>
                 <el-button type="primary" @click="login()">确认</el-button>
@@ -22,6 +22,7 @@
 
 <style scoped>
     .el-form-item{
+        margin: 20px auto;
         text-align: center;
     }
     #change_body{
@@ -34,16 +35,16 @@ export default {
   data() {
     return {
       ruleForm:{
-                ID:'',
-                password:'',
-                name:'',
+                rId:'',
+                rPwd:'',
+                rName:'',
             },
             rules: {
-                ID: [
+                rId: [
                     { required: true, message: '请输入ID', trigger: 'blur' },
                     { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
                 ],
-                password: [
+                rPwd: [
                     { required: true, message: '请输入密码',trigger: 'blur' },
                     { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
                 ]
@@ -52,19 +53,16 @@ export default {
     }, 
     methods:{
       login:function(){
-        this.$store.state.username = this.ruleForm.ID;
+        this.$store.state.username = this.ruleForm.rName;
         this.$store.state.enterable = false;
         this.$store.state.entersuccess = true;
         this.$store.state.registerable = false;
         this.$store.state.createissue = true;
         this.$store.state.issuereport = true;
         this.$store.state.changeable = true;
+        this.$store.state.changeissue = true;
         this.$router.go(-1);
       }
     }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>

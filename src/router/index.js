@@ -7,6 +7,7 @@ import registerPage from "../components/registerPage.vue";
 import changePage from '../components/changePage.vue';
 import createIssue from '../components/createIssue.vue';
 import issueReport from '../components/issueReport.vue';
+import changeIssue from '../components/changeIssue.vue';
 import axios from 'axios';
 Vue.prototype.$axios = axios;
 
@@ -43,6 +44,11 @@ const routes = [{
         path: '/issuereport',
         name: 'issueReport',
         component: issueReport
+    },
+    {
+        path: '/changeissue',
+        name: 'changeIssue',
+        component: changeIssue
     }
 
 ];

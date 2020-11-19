@@ -13,6 +13,7 @@ const store = new Vuex.Store({
         registerable: true,
         createissue: false,
         issuereport: false,
+        changeissue: false,
     }
 })
 

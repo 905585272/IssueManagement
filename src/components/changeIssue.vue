@@ -37,15 +37,23 @@
                 <el-form-item label="计划修改时间" class="col-md-3" prop="iPlantime">
                     <el-date-picker type="date" placeholder="选择日期" v-model="issueform.iPlantime" :picker-options="pickerOptions0"></el-date-picker>
                 </el-form-item>
-
-                <el-form-item label="重现步骤" class="col-md-12" prop="iReappear">
-                    <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10"></el-input>
+                <el-form-item label="实际完成时间" class="col-md-3">
+                    <el-input v-model="issueform.iFinishtime" ReadOnly></el-input>
                 </el-form-item>
-                <el-form-item label="指派修改人" class="col-md-4" prop="iChangeperson">
-                    <el-input v-model="issueform.iChangeperson"></el-input>
+            
+                <el-form-item label="重现步骤" class="col-md-12" prop="iReappear">
+                    <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" ></el-input>
+                </el-form-item>
+
+                <el-form-item label="解决方案" class="col-md-12" prop="iHandlemethod">
+                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" v-if="show_hide"></el-input>
+                </el-form-item>
+
+                <el-form-item label="指派修改人" class="col-md-4">
+                    <el-input v-model="issueform.iChangeperson" ReadOnly></el-input>
                 </el-form-item>
                 <el-form-item class="col-md-12">
-                    <el-button type="primary" @click="submitForm('issueform')">提交</el-button>
+                    <el-button type="primary" @click="submitForm('issueform')" v-if="show_hide">提交验证</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -68,22 +76,14 @@
 <script>
 export default {
     data() {
-        var checkChinese = (rule, value, callback) => {
-            if (value) {
-                if (!/^[\u2E80-\u9FFF]+$/.test(value)) {
-                callback(new Error('请输入汉字!'));
-                } else {
-                callback();
-                }
-            }
-            callback();
-        }
       return {
         pickerOptions0:{ 
             disabledDate(time) {
                 return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的 
             }
         },
+        show_flg:true,
+        rNname:'',
         issueform: {
             iCreator:'',
             iTitle:'',
@@ -118,27 +118,32 @@ export default {
             iPlantime: [
                 { type: 'date', required: true, message: '请选择计划时间', trigger: 'change' }
             ],
-            iChangeperson:[
-                { required: true, message: '请输入指派修改人', trigger: 'blur' },
-                { validator: checkChinese, trigger: 'blur' }
+            iHandlemethod:[
+                { min: 1, max: 200, message: '长度在 1 到 2000 个字符', trigger: 'blur' },
             ],
-            iReappear:[
-                { min: 1, max: 2000, message: '长度在 1 到 2000 个字符', trigger: 'blur' },
-            ]
         }
       }
     },
     methods: {
-      submitForm(formName) {
+        submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     alert('submit!');
                     var date=new Date().getFullYear()+"/"+new Date().getMonth()+"/"+new Date().getDate()
-                    this.issueform.iCdate=date;
+                    this.issueform.iFinishtime=date;
+                    this.issueform.iIssuestate='待验证';
                 } else {
                     alert('error submit!!');
                 }
             });
+        },
+        show_hide(){
+            if(this.rNname==this.issueform.iChangeperson){
+                this.show_flg=true;
+            }else if(this.rNname==this.issueform.iCreator){
+                this.show_flg=false;
+            }
+            return this.show_flg;
         }
     }
   };

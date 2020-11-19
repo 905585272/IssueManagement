@@ -21,6 +21,9 @@
       <div class="issueReport col-md-4">
         <router-link to="/issueReport" v-if="issuereport"><h1>Issue报表</h1></router-link>
       </div>
+      <!-- <div class="changeIssue col-md-4">
+        <router-link to="/changeissue" v-if="changeissue"><h1>Issue报表</h1></router-link>
+      </div> -->
   </div>
   </div>
 </template>
@@ -56,7 +59,10 @@ export default {
     },
     issuereport(){
       return this.$store.state.issuereport;
-    }
+    },
+    // changeissue(){
+    //   return this.$store.state.changeissue;
+    // }
   }
 };
 </script>
@@ -74,5 +80,20 @@ export default {
   }
   .router-link-active {
     text-decoration: none;
+  }
+  .registerPage{
+    margin-bottom: 100px;
+  }
+  .enterPage{
+    margin-bottom: 100px;
+  }
+  .changePage{
+    margin-bottom: 100px;
+  }
+  .createIssue{
+    margin-bottom: 100px;
+  }
+  .issueReport{
+    margin-bottom: 100px;
   }
 </style>

@@ -29,9 +29,10 @@
     </div>
 </template>
 
-<style>
+<style scoped>
     .el-form-item{
-        margin:0 auto;
+        margin:20px auto;
+        text-align: center;
     }
     #change_body{
         margin:15% auto;
