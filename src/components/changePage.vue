@@ -6,8 +6,8 @@
         </div>
         <div id="change_body">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-                <el-form-item label="登录ID：" prop="ID" class="col-md-8" id="user_id">
-                    <el-input v-model="ruleForm.ID" disabled="disabled"></el-input>
+                <el-form-item label="登录ID：" prop="id" class="col-md-8" id="user_id">
+                    <el-input v-model="ruleForm.id" disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="姓名：" prop="name" class="col-md-8">
                     <el-input v-model="ruleForm.name" ></el-input>
@@ -86,7 +86,7 @@
             }
             return {
                 ruleForm:{
-                    ID:'',
+                    id:'',
                     name: '',
                     email:'',
                     change_passwd:'',

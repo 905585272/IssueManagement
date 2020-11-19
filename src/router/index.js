@@ -4,6 +4,8 @@ import Home from "../views/Home.vue";
 import enterPage from "../components/enterPage.vue";
 import registerPage from "../components/registerPage.vue";
 import changePage from '../components/changePage.vue';
+import createIssue from '../components/createIssue.vue';
+import issueReport from '../components/issueReport.vue';
 import axios from 'axios';
 Vue.prototype.$axios = axios;
 
@@ -28,6 +30,16 @@ const routes = [{
         path: '/changepage',
         name: 'changePage',
         component: changePage
+    },
+    {
+        path: '/createissue',
+        name: 'createIssue',
+        component: createIssue
+    },
+    {
+        path: '/issuereport',
+        name: 'issueReport',
+        component: issueReport
     }
 
 ];

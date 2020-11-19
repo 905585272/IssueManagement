@@ -9,6 +9,9 @@ const store = new Vuex.Store({
         username: '',
         enterable: true,
         entersuccess: false,
+        registerable: false,
+        createissue: false,
+        issuereport: false,
     }
 })
 
