@@ -6,18 +6,17 @@
         </div>
         <div id="change_body">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-                <el-form-item label="登录ID：" prop="ID" class="col-md-8" id="user_id">
-                    <el-input v-model="ruleForm.ID"></el-input>
+                <el-form-item label="登录ID：" prop="rId" class="col-md-8">
+                    <el-input v-model="ruleForm.rId"></el-input>
                 </el-form-item>
-                <el-form-item label="姓名：" prop="name" class="col-md-8">
-                    <el-input v-model="ruleForm.name" ></el-input>
-                    <!-- onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\u4E00-\u9FA5]/g,''))"  -->
+                <el-form-item label="姓名：" prop="rName" class="col-md-8">
+                    <el-input v-model="ruleForm.rName" ></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱：" prop="email" class="col-md-8">
-                    <el-input v-model="ruleForm.email" type="email"></el-input>
+                <el-form-item label="邮箱：" prop="rEmail" class="col-md-8">
+                    <el-input v-model="ruleForm.rEmail" type="email"></el-input>
                 </el-form-item>
-                <el-form-item label="输入密码：" prop="change_passwd" class="col-md-8">
-                    <el-input v-model="ruleForm.change_passwd" show-password></el-input>
+                <el-form-item label="输入密码：" prop="rPwd" class="col-md-8">
+                    <el-input v-model="ruleForm.rPwd" show-password></el-input>
                 </el-form-item>
                 <el-form-item label="确认密码：" prop="final_passwd" class="col-md-8">
                     <el-input v-model="ruleForm.final_passwd" show-password></el-input>
@@ -55,7 +54,7 @@
                 callback();
             };
             var validatePass2 = (rule, value, callback) => {
-                if (value !== this.ruleForm.change_passwd) {
+                if (value !== this.ruleForm.rPwd) {
                 callback(new Error('两次输入密码不一致!'));
                 }
                  else {
@@ -88,28 +87,28 @@
             }
             return {
                 ruleForm:{
-                    ID:'',
-                    name: '',
-                    email:'',
-                    change_passwd:'',
+                    rId:'',
+                    rName: '',
+                    rEmail:'',
+                    rPwd:'',
                     final_passwd:''
                 },
                 rules: {
-                    ID: [
+                    rId: [
                         { required: true, message: '请输入ID', trigger: 'blur' },
                         { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
                     ],
-                    name: [
+                    rName: [
                         { required: true, message: '请输入名字', trigger: 'blur' },
                         { min: 1, max: 20, message: '长度在 1 到 20 个汉字', trigger: 'blur' },
                         { validator: checkChinese, trigger: 'blur' }
                     ],
-                    email: [
+                    rEmail: [
                         { required: true, message: '请输入邮箱', trigger: 'blur' },
                         { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
                         { validator: checkEmail, trigger: 'blur' }
                     ],
-                    change_passwd: [
+                    rPwd: [
                         { required: true,message: '请输入密码',trigger: 'blur' },
                         { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
                         { validator: validatePass1, trigger: 'blur' }
@@ -122,12 +121,20 @@
             }
         }, 
         methods: {
-            submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
+            submitForm(ruleForm) {
+                this.$refs[ruleForm].validate((valid) => {
+                    console.log("data is posting!");
                     if (valid) {
-                        console.log(this.change_passwd);
-                        console.log(this.final_passwd);
-                        alert('submit!');
+                        this.$http.post("http://127.0.0.1:9090/user/insert2",{
+                            rId:this.ruleForm.rId,
+                            rName:this.ruleForm.rName,
+                            rEmail:this.ruleForm.rEmail,
+                            rPwd:this.ruleForm.rPwd,
+                        }).then(function(resp){
+                            console.log(resp)
+                        }).catch(function(error){
+                            console.log(error);
+                        })
                     } else {
                         alert('error submit!!');
                     }

@@ -55,9 +55,10 @@ export default {
         this.$store.state.username = this.ruleForm.ID;
         this.$store.state.enterable = false;
         this.$store.state.entersuccess = true;
-        this.$store.state.registerable = true;
+        this.$store.state.registerable = false;
         this.$store.state.createissue = true;
         this.$store.state.issuereport = true;
+        this.$store.state.changeable = true;
         this.$router.go(-1);
       }
     }

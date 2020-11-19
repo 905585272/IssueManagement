@@ -6,14 +6,14 @@
    </div>
    <div class="row">
       <div class="registerPage col-md-4">
-        <router-link to="/registerpage"><h1>注册</h1></router-link>
+        <router-link to="/registerpage" v-if="registerable"><h1>注册</h1></router-link>
       </div>
       <div class="enterPage col-md-4">
         <router-link to="/enterpage" v-if="enterable" ><h1>登录</h1></router-link>
         <h1 v-if="entersuccess" >欢迎， {{username}}</h1>
       </div>
-      <div class="registerPage col-md-4">
-        <router-link to="/changepage" v-if="registerable"><h1>修改个人信息</h1></router-link>
+      <div class="changePage col-md-4">
+        <router-link to="/changepage" v-if="changeable"><h1>修改个人信息</h1></router-link>
       </div>
       <div class="createIssue col-md-4">
         <router-link to="/createissue" v-if="createissue"><h1>创建新Issue</h1></router-link>
@@ -45,6 +45,9 @@ export default {
     entersuccess(){
       return this.$store.state.entersuccess;
     },
+    changeable(){
+      return this.$store.state.changeable;
+    },
     registerable(){
       return this.$store.state.registerable;
     },
@@ -69,7 +72,6 @@ export default {
   a {
   text-decoration: none;
   }
- 
   .router-link-active {
     text-decoration: none;
   }
