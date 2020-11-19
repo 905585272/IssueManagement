@@ -72,6 +72,9 @@
     .body{
         margin:10% auto;
     }
+    .el-form-item {
+        margin-left:0px;
+    }
 </style>
 
 <script>

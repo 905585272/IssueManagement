@@ -86,6 +86,7 @@
                 callback();
             }
             return {
+                msg:[],
                 ruleForm:{
                     rId:'',
                     rName: '',
@@ -99,7 +100,7 @@
                         { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
                     ],
                     rName: [
-                        { required: true, message: '请输入名字', trigger: 'blur' },
+                        { required: false, message: '请输入名字', trigger: 'blur' },
                         { min: 1, max: 20, message: '长度在 1 到 20 个汉字', trigger: 'blur' },
                         { validator: checkChinese, trigger: 'blur' }
                     ],
@@ -125,21 +126,39 @@
                 this.$refs[ruleForm].validate((valid) => {
                     console.log("data is posting!");
                     if (valid) {
-                        this.$http.post("http://127.0.0.1:9090/user/insert2",{
-                            rId:this.ruleForm.rId,
-                            rName:this.ruleForm.rName,
-                            rEmail:this.ruleForm.rEmail,
-                            rPwd:this.ruleForm.rPwd,
-                        }).then(function(resp){
-                            console.log(resp)
+                        console.log(this.ruleForm.rId); 
+                        this.$http.get('http://localhost:8080/user/selectall').
+                        then(function(res){
+                            this.msg = res.body;
+                            console.log(this.msg.length);
+                            var flag=true;
+                            this.msg.forEach(item=>{
+                                if (item.rId==this.ruleForm.rId) {
+                                    flag=false;
+                                    alert('相同id！！！');
+                               }
+                            });
+                             if (flag) {
+                                this.$http.post('http://localhost:8080/user/insert',{
+                                rId:this.ruleForm.rId,
+                                rName:this.ruleForm.rName,
+                                rEmail:this.ruleForm.rEmail,
+                                rPwd:this.ruleForm.rPwd,
+                            }).then(function(resp){
+                                console.log(resp)
+                            }).catch(function(error){
+                                console.log(error);
+                            })
+                               }
                         }).catch(function(error){
                             console.log(error);
                         })
+                       
                     } else {
                         alert('error submit!!');
                     }
                 });
-            }
+            },
         }
     };
 </script>
