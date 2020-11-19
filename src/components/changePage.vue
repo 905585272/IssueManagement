@@ -44,7 +44,7 @@
         data() {
             var validatePass1 = (rule, value, callback) => {
                 if (value !== '') { 
-                    if (!/^(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*?[_\-@&=])[a-zA-Z_\-@&=]+.{8,30}$/.test(value)){
+                    if (!/^(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*?[_\-@&=!])[a-zA-Z_\-@&=!0-9]+.{8,30}$/.test(value)){
                         callback(new Error('密码必须包含大小写和特殊字符(_-@&=)，且在8-30位之间'));
                         }
                     }
@@ -87,24 +87,24 @@
             }
             return {
                 ruleForm:{
-                    id:'',
-                    name: '',
-                    email:'',
-                    change_passwd:'',
+                    rId:'',
+                    rName: '',
+                    rEmail:'',
+                    rPwd:'',
                     final_passwd:''
                 },
                 rules: {
-                    name: [
+                    rName: [
                         { required: true, message: '请输入名字', trigger: 'blur' },
                         { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
                         { validator: checkChinese, trigger: 'blur' }
                     ],
-                    email: [
+                    rEmail: [
                         { required: true, message: '请输入邮箱', trigger: 'blur' },
                         { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
                         { validator: checkEmail, trigger: 'blur' }
                     ],
-                    change_passwd: [
+                    rPwd: [
                         { required: true,message: '请输入密码',trigger: 'blur' },
                         { min: 8, max: 30, message: '长度在 8 到 30 个字符', trigger: 'blur' },
                         { validator: validatePass1, trigger: 'blur' }
@@ -118,13 +118,11 @@
         }, 
         methods: {
             
-            submitForm(formName) {
-                const _this = this;
-                
-                this.$refs[formName].validate((valid) => {
+            submitForm(ruleForm) {
+                this.$refs[ruleForm].validate((valid) => {
                     if (valid) {
-                        console.log(_this.ruleForm.change_passwd);
-                        console.log(_this.ruleForm.change_passwd);
+                        console.log(this.ruleForm.rId);
+                        console.log(this.ruleForm.change_passwd);
                         alert('submit!');
                     } else {
                         alert('error submit!!');

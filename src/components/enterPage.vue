@@ -10,7 +10,7 @@
                     <el-input v-model="ruleForm.rId"></el-input>
                 </el-form-item>
                 <el-form-item label="输入密码：" prop="rPwd" class="col-md-8">
-                    <el-input v-model="ruleForm.rPwd"></el-input>
+                    <el-input v-model="ruleForm.rPwd" show-password></el-input>
                 </el-form-item>
                 <el-form-item>
                 <el-button type="primary" @click="submitForm('ruleForm')">确认</el-button>
@@ -52,40 +52,50 @@ export default {
         }
     }, 
     methods:{
-
-
           submitForm(ruleForm) {
                 this.$refs[ruleForm].validate((valid) => {
-                   
                     if (valid) {
-
                         console.log(this.ruleForm.rId); 
                         this.$http.get('http://localhost:8080/user/selectbyid/'+this.ruleForm.rId).
                         then(function(res){
                             console.log(res.data);
                             if(res.data===1){ 
-                                alert("用户不存在！");
+                                this.$alert('用户不存在!', {
+                                    confirmButtonText: '确定',
+                                    })
                             }else{
-                                  
-                                  if(this.ruleForm.rPwd==res.data.rPwd){
-                                alert("登陆成功！");
+                                if(this.ruleForm.rPwd==res.data.rPwd){
                                 this.$store.state.username = this.ruleForm.rName;
-                                this.$router.go(-1);
-                            }
-                            else{
-                                alert("密码错误")
-                            }
+                                this.$alert('欢迎使用', {
+                                    confirmButtonText: '确定',
+                                }).then(() => {
+                                        this.$message({
+                                            type: 'success',
+                                            message: '欢迎!'+res.data.rName,
+                                        },
+                                        this.$store.state.username = res.data.rName,
+                                        this.$store.state.enterable = false,
+                                        this.$store.state.entersuccess = true,
+                                        this.$store.state.registerable = false,
+                                        this.$store.state.createissue = true,
+                                        this.$store.state.issuereport = true,
+                                        this.$store.state.changeable = true,
+                                        this.$router.go(-1));
+                                    });
+                                }
+                                else{
+                                    this.$alert('密码错误!', {
+                                    confirmButtonText: '确定',
+                                    })
+                                }
                             }
                             })
-
                         }
-                        
                         else {
                         alert('error submit!!');
-                    }
-                        })
-                       
-                    } 
+                        }
+                    })    
+                } 
             },
 };
 </script>

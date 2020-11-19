@@ -44,7 +44,7 @@
         data() {
             var validatePass1 = (rule, value, callback) => {
                 if (value !== '') { 
-                    if (!/^(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*?[_\-@&=!])[a-zA-Z_\-@&=!]+.{8,30}$/.test(value)){
+                    if (!/^(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*?[_\-@&=!])[a-zA-Z_\-@&=!0-9]+.{8,30}$/.test(value)){
                         callback(new Error('密码必须包含大小写和特殊字符(_-@&=!)，且在8-30位之间'));
                         }
                     }
@@ -135,7 +135,9 @@
                             this.msg.forEach(item=>{
                                 if (item.rId==this.ruleForm.rId) {
                                     flag=false;
-                                    alert('相同id！！！');
+                                    this.$alert('ID重复!', {
+                                    confirmButtonText: '确定',
+                                    })
                                }
                             });
                              if (flag) {
@@ -146,7 +148,6 @@
                                 rPwd:this.ruleForm.rPwd,
                             }).then(function(resp){
                                 console.log(resp);
-                                alert('用户注册成功！');
                                 this.$store.state.username = this.ruleForm.rName;
                                 this.$store.state.enterable = false;
                                 this.$store.state.entersuccess = true;
@@ -154,7 +155,11 @@
                                 this.$store.state.createissue = true;
                                 this.$store.state.issuereport = true;
                                 this.$store.state.changeable = true;
-                                this.$router.go(-1);
+                                this.$alert('用户注册成功！', {
+                                    confirmButtonText: '确定',
+                                }).then(() => {
+                                        this.$router.go(-1);
+                                    })
                             }).catch(function(error){
                                 console.log(error);
                             })
