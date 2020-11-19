@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import vueResource from 'vue-resource';
 import enterPage from "../components/enterPage.vue";
 import registerPage from "../components/registerPage.vue";
 import changePage from '../components/changePage.vue';
@@ -10,6 +11,8 @@ import axios from 'axios';
 Vue.prototype.$axios = axios;
 
 Vue.use(VueRouter);
+
+Vue.use(vueResource);
 
 const routes = [{
         path: "/",
