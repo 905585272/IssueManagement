@@ -6,7 +6,6 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     // 定义状态
     state: {
-        username: '',
         enterable: true,
         entersuccess: false,
         changeable: false,
@@ -14,6 +13,16 @@ const store = new Vuex.Store({
         createissue: false,
         issuereport: false,
         changeissue: false,
+        // 全局用户数据
+        rId:'',
+        rName: '',
+        rEmail:'',
+        rPwd:'',
+        rUserid:'',
+        rState:'',
+        rCissue: 0,
+        rRissue: 0,
+        rMissue: 0
     }
 })
 

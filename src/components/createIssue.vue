@@ -31,8 +31,8 @@
                     </el-select>
                 </el-form-item>
             
-                <el-form-item label="影响版本" class="col-md-3" prop="iVerson">
-                    <el-input v-model="issueform.iVerson"></el-input>
+                <el-form-item label="影响版本" class="col-md-3" prop="iVesion">
+                    <el-input v-model="issueform.iVesion"></el-input>
                 </el-form-item>
                 <el-form-item label="计划修改时间" class="col-md-3" prop="iPlantime">
                     <el-date-picker type="date" placeholder="选择日期" v-model="issueform.iPlantime" :picker-options="pickerOptions0"></el-date-picker>
@@ -46,6 +46,7 @@
                 </el-form-item>
                 <el-form-item class="col-md-12">
                     <el-button type="primary" @click="submitForm('issueform')">提交</el-button>
+                    <el-button type="button" @click="goback()">返回</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -92,7 +93,7 @@ export default {
             iCdate: '',
             iType: '',
             iLevel: '',
-            iVerson:'',
+            iVesion:'',
             iPlantime:'',
             iFinishtime: '',
             iReappear: '',
@@ -111,7 +112,7 @@ export default {
                 { required: true, message: '请输入issue类型', trigger: 'blur' },
                 { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
             ],
-            iVerson: [
+            iVesion: [
                 { required: true,message: '请输入影响版本',trigger: 'blur' },
                 { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
             ],
@@ -128,18 +129,74 @@ export default {
         }
       }
     },
+    mounted(){
+        this.$http.get('http://localhost:8080/issue/issuecount').
+        then(function(res){
+            this.issueform.iNo = res.body+1;
+        }).catch(function(error){
+            console.log(error);
+        })
+        
+    },
     methods: {
       submitForm(formName) {
             this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    alert('submit!');
-                    var date=new Date().getFullYear()+"/"+new Date().getMonth()+"/"+new Date().getDate()
-                    this.issueform.iCdate=date;
-                } else {
-                    alert('error submit!!');
-                }
-            });
-        }
+                    this.issueform.iCreator=this.$store.state.rName;
+                    console.log("data is posting!");
+                    if (valid) {
+                        this.$http.get('http://localhost:8080/issue/selectall').
+                        then(function(res){
+                            this.msg = res.body;
+                            console.log(this.msg); 
+                            console.log(this.msg.length);
+                            var flag=true;
+                            this.msg.forEach(item=>{
+                                if (item.iNo==this.issueform.iNo) {
+                                    flag=false;
+                                    this.$alert('Issue NO重复!', {
+                                    confirmButtonText: '确定',
+                                    })
+                               }
+                            });
+                             if (flag) {
+                                this.$http.post('http://localhost:8080/issue/insert',{
+                                iCreator:this.issueform.iCreator,
+                                iTitle:this.issueform.iTitle,
+                                iNo:this.issueform.iNo,
+                                iCdate:this.issueform.iCdate,
+                                iType:this.issueform.iType,
+                                iLevel:this.issueform.iLevel,
+                                iVesion:this.issueform.iVesion,
+                                iPlantime:this.issueform.iPlantime,
+                                iFinishtime:this.issueform.iFinishtime,
+                                iReappear:this.issueform.iReappear,
+                                iChangeperson:this.issueform.iChangeperson,
+                                iHandlemethod:this.issueform.iHandlemethod, 
+                            }).then(function(resp){
+                                console.log(resp);
+                                this.$alert('Issue创建成功！', {
+                                    confirmButtonText: '确定',
+                                }).then(() => {
+                                        this.$router.go(-1);
+                                    })
+                            }).catch(function(error){
+                                console.log(error);
+                            })
+                               }
+                        }).catch(function(error){
+                            console.log(error);
+                        })
+                       
+                    } else {
+                        this.$alert('非法操作!', {
+                            confirmButtonText: '确定',
+                            });
+                    }
+                });
+        },
+        goback(){
+                this.$router.go(-1);
+        }, 
     }
   };
 </script>

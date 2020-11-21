@@ -14,6 +14,7 @@
                 </el-form-item>
                 <el-form-item>
                 <el-button type="primary" @click="submitForm('ruleForm')">确认</el-button>
+                <el-button type="button" @click="goback()">返回</el-button>
                 </el-form-item>
             </el-form>
         </div>   
@@ -59,13 +60,20 @@ export default {
                         this.$http.get('http://localhost:8080/user/selectbyid/'+this.ruleForm.rId).
                         then(function(res){
                             console.log(res.data);
+                            if (res.data.rUserid == '经理') {
+                                this.$store.state.createissue = false;
+                                console.log('是经理');
+                            }else{
+                            this.$store.state.createissue = true;
+                            console.log('不是经理');
+                        }
                             if(res.data===1){ 
                                 this.$alert('用户不存在!', {
                                     confirmButtonText: '确定',
                                     })
                             }else{
                                 if(this.ruleForm.rPwd==res.data.rPwd){
-                                this.$store.state.username = this.ruleForm.rName;
+                                this.$store.state.rName = this.ruleForm.rName;
                                 this.$alert('欢迎使用', {
                                     confirmButtonText: '确定',
                                 }).then(() => {
@@ -73,13 +81,21 @@ export default {
                                             type: 'success',
                                             message: '欢迎!'+res.data.rName,
                                         },
-                                        this.$store.state.username = res.data.rName,
                                         this.$store.state.enterable = false,
                                         this.$store.state.entersuccess = true,
                                         this.$store.state.registerable = false,
-                                        this.$store.state.createissue = true,
                                         this.$store.state.issuereport = true,
                                         this.$store.state.changeable = true,
+                                        // 全局用户数据同步
+                                        this.$store.state.rId = res.data.rId,
+                                        this.$store.state.rName = res.data.rName,
+                                        this.$store.state.rEmail = res.data.rEmail,
+                                        this.$store.state.rPwd = res.data.rPwd,
+                                        this.$store.state.rUserid = res.data.rUserid,
+                                        this.$store.state.rState = res.data.rState,
+                                        this.$store.state.rCissue = res.data.rCissue,
+                                        this.$store.state.rRissue = res.data.rRissue,
+                                        this.$store.state.rMissue = res.data.rMissue,
                                         this.$router.go(-1));
                                     });
                                 }
@@ -95,7 +111,10 @@ export default {
                         alert('error submit!!');
                         }
                     })    
-                } 
+                },
+                goback(){
+                    this.$router.go(-1);
+                }, 
             },
 };
 </script>

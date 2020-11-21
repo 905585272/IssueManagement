@@ -10,7 +10,7 @@
       </div>
       <div class="enterPage col-md-4">
         <router-link to="/enterpage" v-if="enterable" ><h1>登录</h1></router-link>
-        <h1 v-if="entersuccess" >欢迎， {{username}}</h1>
+        <h1 v-if="entersuccess" >欢迎， {{rName}}</h1>
       </div>
       <div class="changePage col-md-4">
         <router-link to="/changepage" v-if="changeable"><h1>修改个人信息</h1></router-link>
@@ -39,8 +39,8 @@ export default {
     }
   },
   computed:{
-    username(){
-      return this.$store.state.username;
+    rName(){
+      return this.$store.state.rName;
     },
     enterable(){
       return this.$store.state.enterable;
