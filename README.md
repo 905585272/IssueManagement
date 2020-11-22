@@ -8,13 +8,9 @@
 
 后端技术有：Springboot
 
+想了解更多有关信息，请添加QQ-----905585272进行联系
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
+### 启动服务器
 ```
 npm run serve
 ```
