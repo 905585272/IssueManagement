@@ -89,8 +89,7 @@ export default {
             iCreator:'',
             iTitle:'',
             iNo: '',
-            //Math.floor(Math.random() * 10000)
-            iCdate: '',
+            iCdate: new Date().getFullYear()+"/"+new Date().getMonth()+"/"+new Date().getDay(),
             iType: '',
             iLevel: '',
             iVesion:'',
@@ -139,7 +138,12 @@ export default {
         
     },
     methods: {
-      submitForm(formName) {
+        getDate(strDate){
+            var date = eval('new Date(' + strDate.replace(/\d+(?=-[^-]+$)/, 
+            function (a) { return parseInt(a, 10) - 1; }).match(/\d+/g) + ')');
+            return date;
+            },
+        submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                     this.issueform.iCreator=this.$store.state.rName;
                     console.log("data is posting!");
@@ -150,20 +154,13 @@ export default {
                             console.log(this.msg); 
                             console.log(this.msg.length);
                             var flag=true;
-                            this.msg.forEach(item=>{
-                                if (item.iNo==this.issueform.iNo) {
-                                    flag=false;
-                                    this.$alert('Issue NO重复!', {
-                                    confirmButtonText: '确定',
-                                    })
-                               }
-                            });
+                            console.log("date:"+this.getDate(this.issueform.iCdate));
                              if (flag) {
                                 this.$http.post('http://localhost:8080/issue/insert',{
                                 iCreator:this.issueform.iCreator,
                                 iTitle:this.issueform.iTitle,
                                 iNo:this.issueform.iNo,
-                                iCdate:this.issueform.iCdate,
+                                iCdate:this.getDate(this.issueform.iCdate),
                                 iType:this.issueform.iType,
                                 iLevel:this.issueform.iLevel,
                                 iVesion:this.issueform.iVesion,

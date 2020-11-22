@@ -22,7 +22,9 @@ const store = new Vuex.Store({
         rState:'',
         rCissue: 0,
         rRissue: 0,
-        rMissue: 0
+        rMissue: 0,
+        // 全局报表id
+        iNo:'',
     }
 })
 

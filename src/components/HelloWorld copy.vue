@@ -6,15 +6,13 @@
           <h3 class="col-md-12 blue_text"><i class="el-icon-s-help white_text"></i>Issue管理系统</h3>
         </div>
         <div class="registerPage col-md-12">
-          <router-link to="/registerpage" class="white_text">
-            <el-button type="primary" class="white_text" v-if="registerable">
-              <h5><i class="el-icon-s-help white_text"></i>注册</h5>
-            </el-button>
-          </router-link>
-          <div class="block"><el-avatar shape="square" :size="120" :src="squareUrl" v-if="changeable"></el-avatar></div>
+          <el-button type="primary" class="white_text">
+            <router-link to="/registerpage" v-if="registerable" class="white_text"><h5><i class="el-icon-s-help white_text"></i>注册</h5></router-link>
+          </el-button>
+          <div class="block"><el-avatar shape="square" :size="70" :src="squareUrl" v-if="changeable"></el-avatar></div>
         </div>
         <div class="enterPage col-md-12">
-          <el-button @click="drawer = true" type="primary" class="white_text" v-if="enterable">
+          <el-button @click="drawer = true" type="primary" class="white_text">
             <h5><i class="el-icon-user-solid white_text"></i>登录</h5>
           </el-button>
           
@@ -71,32 +69,12 @@
         </div>
       </div>
     </el-container>
-    <el-drawer id="enter_body"
-      title="用户登陆"
+    <el-drawer
+      title="我是标题"
       :visible.sync="drawer"
-      :with-header="false"
       :direction="direction"
       :before-close="handleClose">
-      >
-      <div class="container">
-        <div>
-            <div id="change_info_title">
-                <h5 class="text-left"><b>用户登陆</b></h5>
-                <hr>
-            </div>
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-                <el-form-item label="系统ID：" prop="rId" class="col-md-8" id="user_id">
-                    <el-input v-model="ruleForm.rId"></el-input>
-                </el-form-item>
-                <el-form-item label="输入密码：" prop="rPwd" class="col-md-8">
-                    <el-input v-model="ruleForm.rPwd" show-password></el-input>
-                </el-form-item>
-                <el-form-item>
-                <el-button type="primary" @click="submitForm('ruleForm')">确认</el-button>
-                </el-form-item>
-            </el-form>
-        </div>   
-      </div>
+      <span>我来啦!</span>
     </el-drawer>
 
   </div>
@@ -110,19 +88,8 @@ export default {
       timer:'',
       time:'',
       ruleForm:{
-        rId:'',
-        rPwd:'',
-        rName:'',
-      },
-      rules: {
-          rId: [
-              { required: true, message: '请输入ID', trigger: 'blur' },
-              { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
-          ],
-          rPwd: [
-              { required: true, message: '请输入密码',trigger: 'blur' },
-              { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
-          ]
+        ID:'',
+        name: '',
       },
       drawer: false,
       direction: 'rtl',
@@ -151,6 +118,9 @@ export default {
     issuereport(){
       return this.$store.state.issuereport;
     },
+    // changeissue(){
+    //   return this.$store.state.changeissue;
+    // }
   },
   mounted(){
     this.timer=setInterval(()=>{
@@ -160,84 +130,15 @@ export default {
       second = new Date().getSeconds();
       this.time = hour+":"+minute+":"+second;
     },1000);
-    console.log("!"+this.$store.state.rUserid);
-    if (this.$store.state.rUserid == '经理') {
-        this.$store.state.createissue = false;
-        console.log('是经理');
-    }else if(this.$store.state.rUserid == '普通用户'){
-    this.$store.state.createissue = true;
-    console.log('不是经理');
-    }
   },
   methods:{
     handleClose(done) {
-      this.$confirm('确认关闭？')
-        .then(() => {
-          done();
-        })
-        .catch(() => {});
-    },
-    closeDrawer(){
-    },
-    submitForm(ruleForm) {
-    this.$refs[ruleForm].validate((valid) => {
-        if (valid) {
-            this.$http.get('http://localhost:8080/user/selectbyid/'+this.ruleForm.rId).
-            then(function(res){
-                console.log(res.data);
-                if(res.data===1){ 
-                    this.$alert('用户不存在!', {
-                        confirmButtonText: '确定',
-                        })
-                }else{
-                    if(this.ruleForm.rPwd==res.data.rPwd){
-                    this.$store.state.rName = this.ruleForm.rName;
-                      // 全局用户数据同步
-                      this.$store.state.rId = res.data.rId,
-                      this.$store.state.rName = res.data.rName,
-                      this.$store.state.rEmail = res.data.rEmail,
-                      this.$store.state.rPwd = res.data.rPwd,
-                      this.$store.state.rUserid = res.data.rUserid,
-                      this.$store.state.rState = res.data.rState,
-                      this.$store.state.rCissue = res.data.rCissue,
-                      this.$store.state.rRissue = res.data.rRissue,
-                      this.$store.state.rMissue = res.data.rMissue;
-                      if (this.$store.state.rUserid == '经理') {
-                        this.$store.state.createissue = false;
-                        console.log('是经理');
-                      }else if(this.$store.state.rUserid == '普通用户'){
-                      this.$store.state.createissue = true;
-                      console.log('不是经理');
-                      }
-                    this.$alert('欢迎使用', {
-                        confirmButtonText: '确定',
-                    }).then(() => {
-                            this.$message({
-                                type: 'success',
-                                message: '欢迎!'+res.data.rName,
-                            },
-                            this.$store.state.enterable = false,
-                            this.$store.state.entersuccess = true,
-                            this.$store.state.registerable = false,
-                            this.$store.state.issuereport = true,
-                            this.$store.state.changeable = true,
-                            this.drawer=false,
-                            );
-                        });
-                    }
-                    else{
-                        this.$alert('密码错误!', {
-                        confirmButtonText: '确定',
-                        })
-                    }
-                }
-                })
-            }
-            else {
-            alert('error submit!!');
-            }
-        })    
-    },
+        this.$confirm('确认关闭？')
+          .then(() => {
+            done();
+          })
+          .catch(() => {});
+    }
   },
   beforeDestroy() {
     clearTimeout(this.timer);
