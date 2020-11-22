@@ -92,9 +92,7 @@
         </el-table-column>
         <el-table-column prop="action" label="操作">
           <template>
-            <el-button type="text" size="small" @click="linkTo">
-              详情
-            </el-button>
+            <el-button type="text" size="small"> 详情 </el-button>
             <el-button type="text" size="small" @click="linkToChangeIssue">
               修改
             </el-button>
@@ -265,7 +263,7 @@ export default {
       this.$router.go(-1);
     },
     linkToChangeIssue() {
-      // this.$store.
+      this.$router.go("/changeissue");
     },
   },
 };
