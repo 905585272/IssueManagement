@@ -4,6 +4,10 @@
 
 这是通过Vue + SpringBoot + MySQL搭建的一个可以方便测试人员写入测试用例，管理测试人员情况的管理系统
 
+前端技术有：HTML + CSS + JS + VUE.JS + Bootstrap.js + Element-ui
+
+后端技术有：Springboot
+
 
 ## Project setup
 ```
