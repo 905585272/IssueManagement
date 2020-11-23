@@ -14,6 +14,7 @@ const store = new Vuex.Store({
         issuereport: false,
         changeissue: false,
         issuelist: false,
+        iconable: false,
         // 全局用户数据
         rId: '',
         rName: '',

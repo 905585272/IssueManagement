@@ -56,6 +56,7 @@
                 <el-form-item class="col-md-12">
                     <el-button type="primary" @click="submitForm('issueform')" v-if="show_flg">提交验证</el-button>
                     <el-button type="primary" @click="return_issue()" v-if="show_flg2">退回修改</el-button>
+                    <el-button type="primary" @click="agree_issue()" v-if="show_flg2">接受修改</el-button>
                     <el-button type="button" @click="goback()">返回</el-button>
                 </el-form-item>
             </el-form>
@@ -148,7 +149,7 @@ export default {
             if(this.$store.state.rName==res.data.iChangeperson){
                 this.show_flg=true;
                 this.show_flg2=false;
-            }else if(this.$store.state.rName==res.data.iCreator){
+            }else if(this.$store.state.rId+this.$store.state.rName==res.data.iCreator){
                 this.show_flg=false;
                 this.show_flg2=true;
                 document.getElementById("issue_type").readOnly=true;
@@ -187,6 +188,7 @@ export default {
                             iHandlemethod:this.issueform.iHandlemethod,
                             iIssuestate:this.issueform.iIssuestate,
                             iPlantime:this.issueform.iPlantime,
+                            // 更新用户对应的issue数量
                         }).then(
                             this.$router.go(-1),
                             )
@@ -196,19 +198,67 @@ export default {
                 }
             });
         },
+        agree_issue(){
+            this.$http.post('http://localhost:8080/user/selectallSelective',{
+                rName:this.issueform.iChangeperson,
+            }).then(function(res){
+                this.msg=res.body;
+                this.msg.forEach(item=>{
+                    if (item.rName==this.issueform.iChangeperson && (this.issueform.iIssuestate!=='关闭'&& this.issueform.iIssuestate!=='待修改')) {
+                    console.log("该报表还未修改！");
+                    this.issueform.iIssuestate='关闭';
+                    this.$http.post('http://localhost:8080/user/update',{
+                        rId:item.rId,
+                        rMissue:parseInt(item.rMissue+1),
+                        }).then(
+                            this.$http.post('http://localhost:8080/issue/update',{
+                            iNo:this.issueform.iNo,
+                            iIssuestate:this.issueform.iIssuestate,
+                            }).then(
+                            this.$router.go(-1),
+                            ) 
+                        )  
+                    }else if (this.issueform.iIssuestate =='关闭') {
+                        this.$alert('该报表已经是关闭状态！', {
+                            confirmButtonText: '确定',
+                        })
+                    }else if (this.issueform.iIssuestate=='待修改') {
+                        this.$alert('该报表还未修改！', {
+                            confirmButtonText: '确定',
+                        })
+                        // console.log("该报表还未修改！");
+                    }
+                });
+            });
+        },
         return_issue(){
             this.issueform.iFinishtime=new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate();
-            this.issueform.iIssuestate='退回';
-            this.$alert('Issue退回成功！', {
-                confirmButtonText: '确定',
-            }).then(() => {
+            if (this.issueform.iIssuestate=='退回') {
+                this.$alert('该报表已经是退回状态！', {
+                    confirmButtonText: '确定',
+                })
+            }else if (this.issueform.iIssuestate =='待修改') {
+                this.$alert('该报表还未修改！', {
+                    confirmButtonText: '确定',
+                })
+            }else if (this.issueform.iIssuestate=='关闭') {
+                this.$alert('该报表已经是关闭状态！', {
+                    confirmButtonText: '确定',
+                })
+            }else{
+                this.$alert('Issue退回成功！', {
+                    confirmButtonText: '确定',
+                }).then(() => {
+                    this.issueform.iIssuestate='退回';
                     this.$http.post('http://localhost:8080/issue/update',{
                     iNo:this.issueform.iNo,
                     iIssuestate:this.issueform.iIssuestate,
-                }).then(
+                    }).then(
                     this.$router.go(-1),
                     )
                 })
+            };
+            
         },
         goback(){
                 this.$router.go(-1);

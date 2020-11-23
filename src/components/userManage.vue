@@ -2,46 +2,16 @@
     <div class="container">
         <div>
             <div class="titlea col-md-12">
-                <h5 class="text-left"><b>Issue查询</b></h5>
+                <h5 class="text-left"><b>账号管理</b></h5>
                 <el-divider></el-divider>
             </div>
             <div class="issue_menu col-md-9">
-                <el-form :model="issueform" :rules="rules" ref="issueform" class="row">
-                    <el-form-item label="Issue No" prop="iNo" class="col-md-3" >
-                        <el-input v-model="issueform.iNo"></el-input>
+                <el-form :model="userform" :rules="rules" ref="userform" class="row">
+                    <el-form-item label="用户ID" class="col-md-6" >
+                        <el-input v-model="userform.iCreator"></el-input>
                     </el-form-item>
-                    <el-form-item label="Issue状态" class="col-md-3" >
-                        <el-select v-model="issueform.iLevel" placeholder="请选择Issue状态">
-                            <el-option label="待验证" value="待验证" name="iIssuestate"></el-option>
-                            <el-option label="已关闭" value="已关闭" name="iIssuestate"></el-option>
-                            <el-option label="待修改" value="待修改" name="iIssuestate"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="创建时间" class="col-md-6">
-                        <el-date-picker 
-                            v-model="issueform.iCdate"
-                            type="daterange"
-                            unlink-panels
-                            range-separator="-"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期">
-                        </el-date-picker>
-                    </el-form-item>
-                    <el-form-item label="创建人" class="col-md-3" >
-                        <el-input v-model="issueform.iCreator"></el-input>
-                    </el-form-item>
-                    <el-form-item label="修改人" prop="iCreator" class="col-md-3" >
-                        <el-input id="change_person" v-model="issueform.iChangeperson"></el-input>
-                    </el-form-item>
-                    <el-form-item label="修改时间" class="col-md-6">
-                        <el-date-picker 
-                            v-model="issueform.iFinishtime"
-                            type="daterange"
-                            unlink-panels
-                            range-separator="-"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期">
-                        </el-date-picker>
+                    <el-form-item label="用户姓名" prop="iCreator" class="col-md-6" >
+                        <el-input v-model="userform.iChangeperson"></el-input>
                     </el-form-item>
                     <el-form-item class="issue_button">
                     <el-button type="primary" @click="submitForm()">查询</el-button>
@@ -53,7 +23,7 @@
         </div>
         <div class="col-md-12">
             <div class="titlea col-md-12">
-                <h5 class="text-left"><b>Issue列表</b></h5>
+                <h5 class="text-left"><b>账号列表</b></h5>
                 <el-divider></el-divider>
             </div>
             <el-table class="col-md-12 issue_table"
@@ -70,53 +40,45 @@
                 :index="indexMethod">
                 </el-table-column>
                 <el-table-column
-                prop="iNo"
-                label="IssueID">
+                prop="rId"
+                label="用户ID">
                 </el-table-column>
                 <el-table-column
-                prop="iTitle"
-                label="Issue标题">
+                prop="rName"
+                label="用户姓名">
                 </el-table-column>
                 <el-table-column
-                prop="iCreator"
-                label="创建人">
+                prop="rEmail"
+                label="邮箱">
                 </el-table-column>
                 <el-table-column
-                prop="iCdate"
-                label="创建时间">
+                prop="rUserid"
+                label="用户身份">
                 </el-table-column>
+                <!-- <el-table-column prop="r">
+                    
+                </el-table-column> -->
                 <el-table-column
-                prop="iChangeperson"
-                label="修改人">
-                </el-table-column>
-                <el-table-column
-                prop="iIssuestate"
-                label="Issue状态">
-                </el-table-column>
-                <el-table-column
-                prop="iPlantime"
-                label="计划完成时间">
-                </el-table-column>
-                <el-table-column
-                prop="iFinishtime"
-                label="实际完成时间">
+                prop="rState"
+                label="账号状态">
                 </el-table-column>
                 <el-table-column
                 prop="action"
                 label="操作">
                 <template slot-scope="scope">
-                    <router-link to="/viewIssue">
+                    <router-link to="/viewIssue" v-if="cancellation">
                         <el-button
-                        icon="el-icon-view"
+                        size="small"
                         @click="turnto_changeIssue(scope.row)">
+                        注销
                         </el-button>
                     </router-link>
-                    <router-link to="/changeIssue">
+                    <router-link to="/changeIssue" v-if="promotion">
                         <el-button
                         type="primary"
-                        icon="el-icon-edit"
-                        @click="turnto_changeIssue(scope.row)"
-                        v-if="rUserid_flg">
+                        size="small"
+                        @click="turnto_changeIssue(scope.row)">
+                        经理
                         </el-button>
                     </router-link>
                 </template>
@@ -140,33 +102,19 @@
                 callback();
             };
             return{
-                rUserid_flg:'',
-                issueform:{
-                    iCreator:'',
-                    iTitle:'',
-                    iNo: '',
-                    iCdate: '',
-                    iType: '',
-                    iLevel: '',
-                    iVesion:'',
-                    iPlantime:'',
-                    iFinishtime: '',
-                    iReappear: '',
-                    iChangeperson:this.$store.state.rName,
-                    iHandlemethod:'',
-                    iIssuestate:'',
+                cancellation:true,
+                promotion:true,
+                userform:{
+                    rId:'',
+                    rName:'',
                 },
                 tableData: [
                 ],
                 rules:{
-                    iNo: [
+                    rId: [
                         { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
                     ], 
-                    iCreator: [
-                        { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
-                        { validator: checkChinese, trigger: 'blur' }
-                    ],
-                    iChangeperson: [
+                    rName: [
                         { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
                         { validator: checkChinese, trigger: 'blur' }
                     ],
@@ -174,36 +122,15 @@
             }
         },
         mounted(){
-            if(this.$store.state.rUserid=='经理'){
-                this.rUserid_flg=false;
-                this.$http.get('http://localhost:8080/issue/selectall').
-                then(function(res){
-                    this.msg = res.body;
-                    this.msg.forEach(item=>{
-                        this.tableData.push(item);
-                    });
-                }).catch(function(error){
-                    console.log(error);
-                })
-            }else if (this.$store.state.rUserid=='普通用户') {
-                this.rUserid_flg=true;
-                this.$http.get('http://localhost:8080/issue/selectall').
-                then(function(res){
-                    // 更改修改人输入框是否只读
-                    document.getElementById("change_person").readOnly=true;
-                    
-                    this.msg = res.body;
-                    console.log(this.msg.length);
-                    this.msg = res.body;
-                    this.msg.forEach(item=>{
-                        if (item.iChangeperson==this.$store.state.rName || item.iCreator==(this.$store.state.rId+this.$store.state.rName)){
-                            this.tableData.push(item);
-                        }
-                    });
-                }).catch(function(error){
-                    console.log(error);
-                })
-            }
+            this.$http.get('http://localhost:8080/user/selectall').
+            then(function(res){
+                this.msg = res.body;
+                this.msg.forEach(item=>{
+                    this.tableData.push(item);
+                });
+            }).catch(function(error){
+                console.log(error);
+            });
         },
         methods: {
             turnto_changeIssue(row){
@@ -224,16 +151,11 @@
             // 标记状态
             tableRowClassName({row}) {
                 // console.log(row.issue_state);
-                if (row.iIssuestate == '待验证') {
-                return 'warning-row';
-                } else if (row.iIssuestate == '关闭') {
-                return 'success-row';
-                } else if (row.iIssuestate == '退回') {
-                return 'danger-row';
-                }else if(row.iIssuestate == '待修改'){
-                    return 'changeable-row'
+                if (row.rUserid == '经理') {
+                return this.promotion = false;
+                } else if (row.rUserid == 'admin') {
+                return this.promotion = false;
                 }
-                return '';
             },
             // 序号生成
             indexMethod(index) {
@@ -280,11 +202,8 @@
                 // });
             },
             reset(){
-                this.issueform.iCreator='';
-                this.issueform.iNo='';
-                this.issueform.iCdate= '';
-                this.issueform.iFinishtime='',
-                this.issueform.iIssuestate='';
+                this.userform.rId='';
+                this.userform.rName='';
             },
             goback(){
                 this.$router.go(-1);
@@ -310,9 +229,6 @@
     }
     .el-table .danger-row {
         background: #F56C6C;
-    }
-    .el-table .changeable-row{
-        background: #cfe7ff;
     }
     .issue_table{
         margin: 20px auto;

@@ -11,7 +11,7 @@
               <h5><i class="el-icon-s-help white_text"></i>注册</h5>
             </el-button>
           </router-link>
-          <div class="block"><el-avatar shape="square" :size="70" :src="squareUrl" v-if="changeable"></el-avatar></div>
+          <div class="block"><el-avatar shape="square" :size="70" :src="squareUrl" v-if="iconable"></el-avatar></div>
         </div>
         <div class="enterPage col-md-12" v-if="enterable">
           <el-button @click="drawer = true" type="primary" class="white_text" >
@@ -30,6 +30,9 @@
         </div>
         <div class="issueReport col-md-12" v-if="issuereport">
           <router-link to="/issueReport" class="white_text"><h5><i class="el-icon-star-on white_text"></i>Issue报表</h5></router-link>
+        </div>
+        <div class="issueReport col-md-12" v-if="admin_flg">
+          <router-link to="/userManage" style="color:#F56C6C"><h5><i class="el-icon-loading"></i>账号管理</h5></router-link>
         </div>
         <div class=" col-md-10" id="producer_list">
           <h4 class="white_text col-md-12">--------关于我们--------</h4>
@@ -127,6 +130,7 @@ export default {
               { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
           ]
       },
+      admin_flg:false,
       drawer: false,
       direction: 'rtl',
       calendar_data: new Date(),
@@ -157,6 +161,9 @@ export default {
     issuereport(){
       return this.$store.state.issuereport;
     },
+    iconable(){
+      return this.$store.state.iconable;
+    }
   },
   mounted(){
     this.timer=setInterval(()=>{
@@ -168,11 +175,14 @@ export default {
     },1000);
     console.log("!"+this.$store.state.rUserid);
     if (this.$store.state.rUserid == '经理') {
-        this.$store.state.createissue = false;
-        console.log('是经理');
+      this.$store.state.createissue = false;
+      // console.log('是经理');
     }else if(this.$store.state.rUserid == '普通用户'){
-    this.$store.state.createissue = true;
-    console.log('不是经理');
+      this.$store.state.createissue = true;
+      // console.log('不是经理');
+    }else if (this.$store.state.rUserid == 'admin') {
+      this.$store.state.createissue = false;
+      this.admin_flg=true;
     }
   },
   methods:{
@@ -214,13 +224,20 @@ export default {
                       this.$store.state.issuereport = true,
                       this.$store.state.changeable = true,
                       this.$store.state.issuelist = true,
+                      this.$store.state.iconable = true,
                       this.drawer=false;
                       if (this.$store.state.rUserid == '经理') {
                         this.$store.state.createissue = false;
-                        console.log('是经理');
+                        // console.log('是经理');
                       }else if(this.$store.state.rUserid == '普通用户'){
-                      this.$store.state.createissue = true;
-                      console.log('不是经理');
+                        this.$store.state.createissue = true;
+                        // console.log('不是经理');
+                      }else if (this.$store.state.rUserid == 'admin') {
+                        this.admin_flg=true;
+                        this.$store.state.changeable = false;
+                        this.$store.state.createissue = false;
+                        this.$store.state.issuelist = false;
+                        this.$store.state.issuereport =false;
                       }
                     this.$alert('欢迎使用', {
                         confirmButtonText: '确定',

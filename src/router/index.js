@@ -10,6 +10,7 @@ import issueReport from '../components/issueReport.vue';
 import changeIssue from '../components/changeIssue.vue';
 import viewIssue from '../components/viewIssue.vue';
 import issueList from '../components/issueList.vue';
+import userManage from '../components/userManage.vue';
 import axios from 'axios';
 Vue.prototype.$axios = axios;
 
@@ -61,6 +62,11 @@ const routes = [{
         path: '/issuelist',
         name: 'issueList',
         component: issueList
+    },
+    {
+        path: '/userManage',
+        name: 'userManage',
+        component: userManage
     },
 
 ];

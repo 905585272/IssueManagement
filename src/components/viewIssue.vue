@@ -41,8 +41,8 @@
                     <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" ReadOnly></el-input>
                 </el-form-item>
 
-                <el-form-item label="解决方案" class="col-md-12">
-                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" v-if="show_hide" ReadOnly></el-input>
+                <el-form-item label="解决方案" class="col-md-12" v-if="show_flg">
+                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" ReadOnly></el-input>
                 </el-form-item>
 
                 <el-form-item label="指派修改人" class="col-md-4">
@@ -78,7 +78,7 @@ export default {
                 return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的 
             }
         },
-        show_flg:true,
+        show_flg:'',
         rNname:'',
         issueform: {
             iCreator:'',
@@ -113,6 +113,11 @@ export default {
         this.issueform.iHandlemethod=this.$store.state.iHandlemethod;
         this.issueform.iIssuestate=this.$store.state.iIssuestate;
         this.issueform.iPlantime=this.$store.state.iPlantime;
+        if(this.$store.state.rName==this.issueform.iChangeperson){
+                this.show_flg=true;
+            }else if(this.$store.state.rName==this.issueform.iCreator){
+                this.show_flg=false;
+            }
     },
     methods: {
         getDate(strDate){
@@ -120,14 +125,6 @@ export default {
             function (a) { return parseInt(a, 10) - 1; }).match(/\d+/g) + ')');
             return date;
             },
-        show_hide(){
-            if(this.rNname==this.issueform.iChangeperson){
-                this.show_flg=true;
-            }else if(this.rNname==this.issueform.iCreator){
-                this.show_flg=false;
-            }
-            return this.show_flg;
-        },
         goback(){
                 this.$router.go(-1);
         },

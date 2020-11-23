@@ -80,10 +80,15 @@ export default {
             callback();
         }
       return {
+        msg:[],
         pickerOptions0:{ 
             disabledDate(time) {
                 return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的 
             }
+        },
+        userform:{
+            rId:'',
+            rCissue:'',
         },
         issueform: {
             iCreator:'',
@@ -146,48 +151,79 @@ export default {
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                     this.issueform.iCreator=this.$store.state.rName;
-                    console.log("data is posting!");
                     if (valid) {
-                        this.$http.get('http://localhost:8080/issue/selectall').
-                        then(function(res){
-                            this.msg = res.body;
-                            // console.log(this.msg);
-                            var flag=true;
-                            console.log("date:"+this.getDate(this.issueform.iCdate));
-                             if (flag) {
-                                this.$http.post('http://localhost:8080/issue/insert',{
-                                iCreator:this.issueform.iCreator,
-                                iTitle:this.issueform.iTitle,
-                                iNo:this.issueform.iNo,
-                                iCdate:this.issueform.iCdate,
-                                // this.getDate(this.issueform.iCdate),
-                                iType:this.issueform.iType,
-                                iLevel:this.issueform.iLevel,
-                                iVesion:this.issueform.iVesion,
-                                iPlantime:this.issueform.iPlantime,
-                                iFinishtime:this.issueform.iFinishtime,
-                                iReappear:this.issueform.iReappear,
-                                iChangeperson:this.issueform.iChangeperson,
-                                iHandlemethod:this.issueform.iHandlemethod, 
-                            }).then(function(resp){
-                                console.log(resp);
-                                this.$alert('Issue创建成功！', {
-                                    confirmButtonText: '确定',
-                                }).then(() => {
-                                        this.$router.go(-1);
-                                    })
-                            }).catch(function(error){
-                                console.log(error);
-                            })
-                               }
-                        }).catch(function(error){
-                            console.log(error);
-                        })
-                       
+                        this.$http.post('http://localhost:8080/user/selectallSelective',{
+                            rName:this.issueform.iChangeperson,
+                        }).then(function(res){
+                            this.msg=res.body;
+                            // console.log("length:"+this.msg.length);
+                            // console.log(this.issueform.iChangeperson),
+                            var flg = false;
+                            this.msg.forEach(item=>{
+                                if (item.rName==this.issueform.iChangeperson) {
+                                    flg = true;
+                                    // console.log("!res:"+item.rId);
+                                    // console.log("!num:"+parseInt(item.rRissue+1));
+                                }
+                            });
+                            if(flg){
+                                this.msg.forEach(item=>{
+                                if (item.rName==this.issueform.iChangeperson) {
+                                    flg = true;
+                                        this.$http.post('http://localhost:8080/user/update',{
+                                        rId:item.rId,
+                                        rRissue:parseInt(item.rRissue+1),
+                                        }).then(
+                                            this.$http.get('http://localhost:8080/user/selectbyid/'+this.$store.state.rId).
+                                            then(function(res){
+                                                // console.log("res:"+this.$store.state.rId);
+                                                // console.log("num:"+parseInt(res.data.rCissue+1));
+                                                this.$http.post('http://localhost:8080/user/update',{
+                                                rId:res.data.rId,
+                                                rCissue:parseInt(res.data.rCissue+1),
+                                                }).catch(function(error){
+                                                    console.log(error);
+                                                })
+                                            })
+                                        ).then(
+                                            this.$http.post('http://localhost:8080/issue/insert',{
+                                            iCreator:this.$store.state.rId+this.issueform.iCreator,
+                                            iTitle:this.issueform.iTitle,
+                                            iNo:this.issueform.iNo,
+                                            iCdate:this.issueform.iCdate,
+                                            // this.getDate(this.issueform.iCdate),
+                                            iType:this.issueform.iType,
+                                            iLevel:this.issueform.iLevel,
+                                            iVesion:this.issueform.iVesion,
+                                            iPlantime:this.issueform.iPlantime,
+                                            iFinishtime:this.issueform.iFinishtime,
+                                            iReappear:this.issueform.iReappear,
+                                            iChangeperson:this.issueform.iChangeperson,
+                                            iHandlemethod:this.issueform.iHandlemethod, 
+                                            }).then(function(resp){
+                                                console.log(resp);
+                                                this.$alert('Issue创建成功！', {
+                                                    confirmButtonText: '确定',
+                                                }).then(() => {
+                                                        
+                                                    })
+                                            }).catch(function(error){
+                                                console.log(error);
+                                            }),
+                                            this.$router.go(-1),
+                                        );
+                                    }
+                                });
+                                
+                            }else{
+                                this.$message.error('你指定的修改人不存在!');
+                                console.log("error")
+                            } 
+                        });
                     } else {
                         this.$alert('非法操作!', {
                             confirmButtonText: '确定',
-                            });
+                        });
                     }
                 });
         },
