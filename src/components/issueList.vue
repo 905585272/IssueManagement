@@ -13,7 +13,8 @@
                     <el-form-item label="Issue状态" class="col-md-3" >
                         <el-select v-model="issueform.iLevel" placeholder="请选择Issue状态">
                             <el-option label="待验证" value="待验证" name="iIssuestate"></el-option>
-                            <el-option label="关闭" value="关闭" name="iIssuestate"></el-option>
+                            <el-option label="已关闭" value="已关闭" name="iIssuestate"></el-option>
+                            <el-option label="待修改" value="待修改" name="iIssuestate"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="创建时间" class="col-md-6">
@@ -229,6 +230,8 @@
                 return 'success-row';
                 } else if (row.iIssuestate == '退回') {
                 return 'danger-row';
+                }else if(row.iIssuestate == '待修改'){
+                    return 'changeable-row'
                 }
                 return '';
             },
@@ -307,6 +310,9 @@
     }
     .el-table .danger-row {
         background: #F56C6C;
+    }
+    .el-table .changeable-row{
+        background: #cfe7ff;
     }
     .issue_table{
         margin: 20px auto;

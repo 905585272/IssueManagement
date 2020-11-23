@@ -23,7 +23,7 @@
                     <el-input v-model="issueform.iType" id="issue_type"></el-input>
                 </el-form-item>
                 <el-form-item label="Issue等级" class="col-md-3" prop="iLevel">
-                    <el-select v-model="issueform.iLevel" placeholder="请选择Issue等级" id="issue_level">
+                    <el-select v-model="issueform.iLevel" placeholder="请选择Issue等级" :disabled="readonly">
                         <el-option label="最高" value="最高" name="iLevel"></el-option>
                         <el-option label="较高" value="较高" name="iLevel"></el-option>
                         <el-option label="一般" value="一般" name="iLevel"></el-option>
@@ -36,7 +36,7 @@
                 </el-form-item>
                 <el-form-item label="计划修改时间" class="col-md-3" prop="iPlantime">
                     <el-date-picker type="date"
-                    placeholder="选择日期" v-model="issueform.iPlantime" :picker-options="pickerOptions0" id="plan_change_date"></el-date-picker>
+                    placeholder="选择日期" v-model="issueform.iPlantime" :picker-options="pickerOptions0" :readonly="readonly"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="实际完成时间" class="col-md-3">
                     <el-input v-model="issueform.iFinishtime" ReadOnly></el-input>
@@ -46,8 +46,8 @@
                     <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" ></el-input>
                 </el-form-item>
 
-                <el-form-item label="解决方案" class="col-md-12" prop="iHandlemethod">
-                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" v-if="show_flg"></el-input>
+                <el-form-item label="解决方案" class="col-md-12" prop="iHandlemethod" v-if="show_flg">
+                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" ></el-input>
                 </el-form-item>
 
                 <el-form-item label="指派修改人" class="col-md-4">
@@ -85,6 +85,7 @@ export default {
                 return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的 
             }
         },
+        readonly:'',
         show_flg:'',
         show_flg2:'',
         rNname:'',
@@ -151,9 +152,9 @@ export default {
                 this.show_flg=false;
                 this.show_flg2=true;
                 document.getElementById("issue_type").readOnly=true;
-                document.getElementById("issue_level").readOnly=true;
                 document.getElementById("issue_version").readOnly=true;
-                document.getElementById("plan_change_date").readOnly=true;
+                document.getElementById("title").readOnly = true;
+                this.readonly = true;
             }
             console.log("user:"+this.$store.state.rName);
             console.log("c:"+this.issueform.iCreator);
