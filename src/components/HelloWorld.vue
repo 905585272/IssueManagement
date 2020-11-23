@@ -17,7 +17,9 @@
           <el-button @click="drawer = true" type="primary" class="white_text" >
             <h5><i class="el-icon-user-solid white_text"></i>登录</h5>
           </el-button>
-          
+          <el-button type="info" class="white_text">
+            <h5><i class="el-icon-right white_text"></i>注销</h5>
+          </el-button>
         </div>
         <div class="changePage col-md-12" v-if="changeable">
           <router-link to="/changepage" class="white_text"><h5><i class="el-icon-s-tools white_text"></i>修改个人信息</h5></router-link>
@@ -267,6 +269,9 @@ export default {
   },
   beforeDestroy() {
     clearTimeout(this.timer);
+  },
+  quit(){
+
   }
 };
 </script>
