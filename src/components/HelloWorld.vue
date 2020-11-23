@@ -11,22 +11,25 @@
               <h5><i class="el-icon-s-help white_text"></i>注册</h5>
             </el-button>
           </router-link>
-          <div class="block"><el-avatar shape="square" :size="120" :src="squareUrl" v-if="changeable"></el-avatar></div>
+          <div class="block"><el-avatar shape="square" :size="70" :src="squareUrl" v-if="changeable"></el-avatar></div>
         </div>
-        <div class="enterPage col-md-12">
-          <el-button @click="drawer = true" type="primary" class="white_text" v-if="enterable">
+        <div class="enterPage col-md-12" v-if="enterable">
+          <el-button @click="drawer = true" type="primary" class="white_text" >
             <h5><i class="el-icon-user-solid white_text"></i>登录</h5>
           </el-button>
           
         </div>
-        <div class="changePage col-md-12">
-          <router-link to="/changepage" v-if="changeable" class="white_text"><h5><i class="el-icon-s-tools white_text"></i>修改个人信息</h5></router-link>
+        <div class="changePage col-md-12" v-if="changeable">
+          <router-link to="/changepage" class="white_text"><h5><i class="el-icon-s-tools white_text"></i>修改个人信息</h5></router-link>
         </div>
-        <div class="createIssue col-md-12">
-          <router-link to="/createissue" v-if="createissue" class="white_text"><h5><i class="el-icon-circle-plus white_text"></i>创建新Issue</h5></router-link>
+        <div class="createIssue col-md-12" v-if="createissue">
+          <router-link to="/createissue" class="white_text"><h5><i class="el-icon-circle-plus white_text"></i>创建新Issue</h5></router-link>
         </div>
-        <div class="issueReport col-md-12">
-          <router-link to="/issueReport" v-if="issuereport" class="white_text"><h5><i class="el-icon-star-on white_text"></i>Issue报表</h5></router-link>
+        <div class="issueList col-md-12" v-if="issuelist">
+          <router-link to="/issueList" class="white_text"><h5><i class="el-icon-star-on white_text"></i>Issue列表</h5></router-link>
+        </div>
+        <div class="issueReport col-md-12" v-if="issuereport">
+          <router-link to="/issueReport" class="white_text"><h5><i class="el-icon-star-on white_text"></i>Issue报表</h5></router-link>
         </div>
         <div class=" col-md-10" id="producer_list">
           <h4 class="white_text col-md-12">--------关于我们--------</h4>
@@ -148,6 +151,9 @@ export default {
     createissue(){
       return this.$store.state.createissue;
     },
+    issuelist(){
+      return this.$store.state.issuelist;
+    },
     issuereport(){
       return this.$store.state.issuereport;
     },
@@ -171,7 +177,7 @@ export default {
   },
   methods:{
     handleClose(done) {
-      this.$confirm('确认关闭？')
+      this.$confirm('确认取消登陆？')
         .then(() => {
           done();
         })
@@ -201,7 +207,14 @@ export default {
                       this.$store.state.rState = res.data.rState,
                       this.$store.state.rCissue = res.data.rCissue,
                       this.$store.state.rRissue = res.data.rRissue,
-                      this.$store.state.rMissue = res.data.rMissue;
+                      this.$store.state.rMissue = res.data.rMissue,
+                      this.$store.state.enterable = false,
+                      this.$store.state.entersuccess = true,
+                      this.$store.state.registerable = false,
+                      this.$store.state.issuereport = true,
+                      this.$store.state.changeable = true,
+                      this.$store.state.issuelist = true,
+                      this.drawer=false;
                       if (this.$store.state.rUserid == '经理') {
                         this.$store.state.createissue = false;
                         console.log('是经理');
@@ -216,12 +229,6 @@ export default {
                                 type: 'success',
                                 message: '欢迎!'+res.data.rName,
                             },
-                            this.$store.state.enterable = false,
-                            this.$store.state.entersuccess = true,
-                            this.$store.state.registerable = false,
-                            this.$store.state.issuereport = true,
-                            this.$store.state.changeable = true,
-                            this.drawer=false,
                             );
                         });
                     }
@@ -234,7 +241,9 @@ export default {
                 })
             }
             else {
-            alert('error submit!!');
+            this.$alert('非法操作!', {
+              confirmButtonText: '确定',
+              });
             }
         })    
     },
@@ -297,7 +306,12 @@ export default {
     line-height: 70px;
   }
   .issueReport{
-    height: 13vh;
+    height: 5vh;
+    text-align: center;
+    line-height: 70px;
+  }
+  .issueList{
+    height: 5vh;
     text-align: center;
     line-height: 70px;
   }

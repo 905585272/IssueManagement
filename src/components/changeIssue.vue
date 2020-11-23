@@ -20,22 +20,23 @@
                     <el-input v-model="issueform.iCdate" ReadOnly></el-input>
                 </el-form-item>
                 <el-form-item label="Issue类型" class="col-md-3" prop="iType">
-                    <el-input v-model="issueform.iType"></el-input>
+                    <el-input v-model="issueform.iType" id="issue_type"></el-input>
                 </el-form-item>
                 <el-form-item label="Issue等级" class="col-md-3" prop="iLevel">
-                    <el-select v-model="issueform.iLevel" placeholder="请选择Issue等级">
-                        <el-option label="最高" value="highest" name="iLevel"></el-option>
-                        <el-option label="较高" value="high" name="iLevel"></el-option>
-                        <el-option label="一般" value="common" name="iLevel"></el-option>
-                        <el-option label="低" value="low" name="iLevel"></el-option>
+                    <el-select v-model="issueform.iLevel" placeholder="请选择Issue等级" id="issue_level">
+                        <el-option label="最高" value="最高" name="iLevel"></el-option>
+                        <el-option label="较高" value="较高" name="iLevel"></el-option>
+                        <el-option label="一般" value="一般" name="iLevel"></el-option>
+                        <el-option label="低" value="低" name="iLevel"></el-option>
                     </el-select>
                 </el-form-item>
             
-                <el-form-item label="影响版本" class="col-md-3" prop="iVerson">
-                    <el-input v-model="issueform.iVerson"></el-input>
+                <el-form-item label="影响版本" class="col-md-3" prop="iVesion">
+                    <el-input v-model="issueform.iVesion" id="issue_version"></el-input>
                 </el-form-item>
                 <el-form-item label="计划修改时间" class="col-md-3" prop="iPlantime">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="issueform.iPlantime" :picker-options="pickerOptions0"></el-date-picker>
+                    <el-date-picker type="date"
+                    placeholder="选择日期" v-model="issueform.iPlantime" :picker-options="pickerOptions0" id="plan_change_date"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="实际完成时间" class="col-md-3">
                     <el-input v-model="issueform.iFinishtime" ReadOnly></el-input>
@@ -46,14 +47,16 @@
                 </el-form-item>
 
                 <el-form-item label="解决方案" class="col-md-12" prop="iHandlemethod">
-                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" v-if="show_hide"></el-input>
+                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" v-if="show_flg"></el-input>
                 </el-form-item>
 
                 <el-form-item label="指派修改人" class="col-md-4">
                     <el-input v-model="issueform.iChangeperson" ReadOnly></el-input>
                 </el-form-item>
                 <el-form-item class="col-md-12">
-                    <el-button type="primary" @click="submitForm('issueform')" v-if="show_hide">提交验证</el-button>
+                    <el-button type="primary" @click="submitForm('issueform')" v-if="show_flg">提交验证</el-button>
+                    <el-button type="primary" @click="return_issue()" v-if="show_flg2">退回修改</el-button>
+                    <el-button type="button" @click="goback()">返回</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -82,17 +85,17 @@ export default {
                 return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的 
             }
         },
-        show_flg:true,
+        show_flg:'',
+        show_flg2:'',
         rNname:'',
         issueform: {
             iCreator:'',
             iTitle:'',
             iNo: '',
-            //Math.floor(Math.random() * 10000)
             iCdate: '',
             iType: '',
             iLevel: '',
-            iVerson:'',
+            iVesion:'',
             iPlantime:'',
             iFinishtime: '',
             iReappear: '',
@@ -111,7 +114,7 @@ export default {
                 { required: true, message: '请输入issue类型', trigger: 'blur' },
                 { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
             ],
-            iVerson: [
+            iVesion: [
                 { required: true,message: '请输入影响版本',trigger: 'blur' },
                 { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
             ],
@@ -124,27 +127,91 @@ export default {
         }
       }
     },
+    mounted(){
+        this.$http.get('http://localhost:8080/issue/selectbyno/'+parseInt(this.$store.state.iNo)).
+        then(function(res){
+            console.log(res);
+            this.issueform.iNo=this.$store.state.iNo;
+            this.issueform.iCreator=res.data.iCreator;
+            this.issueform.iTitle=res.data.iTitle;
+            this.issueform.iCdate=res.data.iCdate;
+            this.issueform.iType=res.data.iType;
+            this.issueform.iLevel=res.data.iLevel;
+            this.issueform.iVesion=res.data.iVesion;
+            this.issueform.iFinishtime=res.data.iFinishtime;
+            this.issueform.iReappear=res.data.iReappear;
+            this.issueform.iChangeperson=res.data.iChangeperson;
+            this.issueform.iHandlemethod=res.data.iHandlemethod;
+            this.issueform.iIssuestate=res.data.iIssuestate;
+            this.issueform.iPlantime=new Date(res.data.iPlantime);
+            if(this.$store.state.rName==res.data.iChangeperson){
+                this.show_flg=true;
+                this.show_flg2=false;
+            }else if(this.$store.state.rName==res.data.iCreator){
+                this.show_flg=false;
+                this.show_flg2=true;
+                document.getElementById("issue_type").readOnly=true;
+                document.getElementById("issue_level").readOnly=true;
+                document.getElementById("issue_version").readOnly=true;
+                document.getElementById("plan_change_date").readOnly=true;
+            }
+            console.log("user:"+this.$store.state.rName);
+            console.log("c:"+this.issueform.iCreator);
+            console.log("show_flg:"+this.show_flg);
+            console.log("show_flg2:"+this.show_flg2);
+        }).catch(function(error){
+            console.log(error);
+        })
+    },
     methods: {
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    alert('submit!');
-                    var date=new Date().getFullYear()+"/"+new Date().getMonth()+"/"+new Date().getDate()
-                    this.issueform.iFinishtime=date;
+                    this.issueform.iFinishtime=new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate();
                     this.issueform.iIssuestate='待验证';
+                    this.$alert('Issue修改完成！', {
+                        confirmButtonText: '确定',
+                    }).then(() => {
+                            this.$http.post('http://localhost:8080/issue/update',{
+                            iNo:this.issueform.iNo,
+                            iCreator:this.issueform.iCreator,
+                            iTitle:this.issueform.iTitle,
+                            iCdate:this.issueform.iCdate,
+                            iType:this.issueform.iType,
+                            iLevel:this.issueform.iLevel,
+                            iVesion:this.issueform.iVesion,
+                            iFinishtime:this.issueform.iFinishtime,
+                            iReappear:this.issueform.iReappear,
+                            iChangeperson:this.issueform.iChangeperson,
+                            iHandlemethod:this.issueform.iHandlemethod,
+                            iIssuestate:this.issueform.iIssuestate,
+                            iPlantime:this.issueform.iPlantime,
+                        }).then(
+                            this.$router.go(-1),
+                            )
+                        })
                 } else {
                     alert('error submit!!');
                 }
             });
         },
-        show_hide(){
-            if(this.rNname==this.issueform.iChangeperson){
-                this.show_flg=true;
-            }else if(this.rNname==this.issueform.iCreator){
-                this.show_flg=false;
-            }
-            return this.show_flg;
-        }
+        return_issue(){
+            this.issueform.iFinishtime=new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate();
+            this.issueform.iIssuestate='退回';
+            this.$alert('Issue退回成功！', {
+                confirmButtonText: '确定',
+            }).then(() => {
+                    this.$http.post('http://localhost:8080/issue/update',{
+                    iNo:this.issueform.iNo,
+                    iIssuestate:this.issueform.iIssuestate,
+                }).then(
+                    this.$router.go(-1),
+                    )
+                })
+        },
+        goback(){
+                this.$router.go(-1);
+        },
     }
   };
 </script>

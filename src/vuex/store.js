@@ -13,18 +13,31 @@ const store = new Vuex.Store({
         createissue: false,
         issuereport: false,
         changeissue: false,
+        issuelist: false,
         // 全局用户数据
-        rId:'',
+        rId: '',
         rName: '',
-        rEmail:'',
-        rPwd:'',
-        rUserid:'',
-        rState:'',
+        rEmail: '',
+        rPwd: '',
+        rUserid: '',
+        rState: '',
         rCissue: 0,
         rRissue: 0,
         rMissue: 0,
-        // 全局报表id
-        iNo:'',
+        // 全局报表信息
+        iCreator: '',
+        iTitle: '',
+        iNo: '',
+        iCdate: '',
+        iType: '',
+        iLevel: '',
+        iVesion: '',
+        iPlantime: '',
+        iFinishtime: '',
+        iReappear: '',
+        iChangeperson: '',
+        iHandlemethod: '',
+        iIssuestate: '',
     }
 })
 

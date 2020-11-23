@@ -24,10 +24,10 @@
                 </el-form-item>
                 <el-form-item label="Issue等级" class="col-md-3" prop="iLevel">
                     <el-select v-model="issueform.iLevel" placeholder="请选择Issue等级">
-                        <el-option label="最高" value="highest" name="iLevel"></el-option>
-                        <el-option label="较高" value="high" name="iLevel"></el-option>
-                        <el-option label="一般" value="common" name="iLevel"></el-option>
-                        <el-option label="低" value="low" name="iLevel"></el-option>
+                        <el-option label="最高" value="最高" name="iLevel"></el-option>
+                        <el-option label="较高" value="较高" name="iLevel"></el-option>
+                        <el-option label="一般" value="一般" name="iLevel"></el-option>
+                        <el-option label="低" value="低" name="iLevel"></el-option>
                     </el-select>
                 </el-form-item>
             
@@ -89,7 +89,7 @@ export default {
             iCreator:'',
             iTitle:'',
             iNo: '',
-            iCdate: new Date().getFullYear()+"/"+new Date().getMonth()+"/"+new Date().getDay(),
+            iCdate: new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate(),
             iType: '',
             iLevel: '',
             iVesion:'',
@@ -151,8 +151,7 @@ export default {
                         this.$http.get('http://localhost:8080/issue/selectall').
                         then(function(res){
                             this.msg = res.body;
-                            console.log(this.msg); 
-                            console.log(this.msg.length);
+                            // console.log(this.msg);
                             var flag=true;
                             console.log("date:"+this.getDate(this.issueform.iCdate));
                              if (flag) {
@@ -160,7 +159,8 @@ export default {
                                 iCreator:this.issueform.iCreator,
                                 iTitle:this.issueform.iTitle,
                                 iNo:this.issueform.iNo,
-                                iCdate:this.getDate(this.issueform.iCdate),
+                                iCdate:this.issueform.iCdate,
+                                // this.getDate(this.issueform.iCdate),
                                 iType:this.issueform.iType,
                                 iLevel:this.issueform.iLevel,
                                 iVesion:this.issueform.iVesion,
