@@ -244,6 +244,10 @@ export default {
                     this.$alert('用户不存在!', {
                         confirmButtonText: '确定',
                         })
+                }else if(res.data.rState === '注销'){
+                    this.$alert('该用户已注销!', {
+                        confirmButtonText: '确定',
+                        })
                 }else{
                     if(this.ruleForm.rPwd==res.data.rPwd){
                     this.$store.state.rName = this.ruleForm.rName;

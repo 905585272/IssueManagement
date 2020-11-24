@@ -7,7 +7,7 @@
             </div>
             <div class="issue_menu col-md-9">
                 <el-form :model="issueform" :rules="rules" ref="issueform" class="row">
-                    <el-form-item label="Issue No" prop="iNo" class="col-md-3" >
+                    <el-form-item label="Issue ID" prop="iNo" class="col-md-3" >
                         <el-input v-model="issueform.iNo"></el-input>
                     </el-form-item>
                     <el-form-item label="Issue状态" class="col-md-3" >
@@ -124,7 +124,7 @@
             </el-table>
             <el-pagination
             background :page-size="4" :pager-count="11" layout="prev, pager, next" :total="total_data_num"
-            @current-change="handleCurrentChange">
+            @current-change="handleCurrentChange" :current-page.sync="page_num">
             </el-pagination>
         </div>
     </div>
@@ -144,6 +144,7 @@
                 callback();
             };
             return{
+                page_num:1,
                 hide_flag:true,
                 total_data_num:1,
                 rUserid_flg:'',
@@ -151,7 +152,7 @@
                     iCreator:'',
                     iTitle:'',
                     iNo: '',
-                    iCdate: '',
+                    iCdate: [],
                     iType: '',
                     iLevel: '',
                     iVesion:'',
@@ -226,16 +227,59 @@
             handleCurrentChange(currentPage){
             // this.currentPage = currentPage;
             // console.log(currentPage);
-                this.$http.get('http://localhost:8080/issue/selectallPage/'+currentPage).
-                    then(function(res){
-                        // console.log(res.data.list);
-                        this.tableData.splice(0,this.tableData.length);
-                        res.data.list.forEach(element=>{
-                            // console.log(element);
-
-                            this.tableData.push(element);
-                        })
-                });
+                if (this.$store.state.rUserid=='普通用户') {
+                    if (this.issueform.iCreator==''&&this.issueform.iChangeperson==''&&this.issueform.iNo==''&&this.issueform.iIssuestate=='') {
+                        this.$http.post('http://localhost:8080/issue/selectallbynamePage/'+this.$store.state.rName+'/'+currentPage).
+                            then(function(res){
+                                // console.log(res.data.list);
+                                this.tableData.splice(0,this.tableData.length);
+                                res.data.list.forEach(element=>{
+                                    // console.log(element);
+                                    this.tableData.push(element);
+                                })
+                        });
+                    }else if (this.issueform.iCreator==''&&this.issueform.iChangeperson=='') {
+                        this.$http.post('http://localhost:8080/issue/selectallSelectivePage/'+currentPage,{
+                            iCreator:this.$store.state.rName,
+                            iChangeperson:this.$store.state.rName,
+                            iNo:this.issueform.iNo,
+                            iIssuestate:this.issueform.iIssuestate,
+                        }).then(function(res){
+                                // console.log(res.data.list);
+                                this.tableData.splice(0,this.tableData.length);
+                                res.data.list.forEach(element=>{
+                                    // console.log(element);
+                                    this.tableData.push(element);
+                                })
+                        });
+                    }else if (this.issueform.iCreator!==''||this.issueform.iChangeperson!=='') {
+                        console.log("search icreator:"+this.issueform.iCreator);
+                        console.log("search ichanger:"+this.issueform.iChangeperson);
+                        this.$http.post('http://localhost:8080/issue/selectallSelectivePage/'+currentPage,{
+                            iCreator:this.issueform.iCreator,
+                            iChangeperson:this.issueform.iChangeperson,
+                            iNo:this.issueform.iNo,
+                            iIssuestate:this.issueform.iIssuestate,
+                        }).then(function(res){
+                                // console.log(res.data.list);
+                                this.tableData.splice(0,this.tableData.length);
+                                res.data.list.forEach(element=>{
+                                    // console.log(element);
+                                    this.tableData.push(element);
+                                })
+                        });
+                    }
+                }else{
+                    this.$http.post('http://localhost:8080/issue/selectallPage/'+currentPage).
+                        then(function(res){
+                            // console.log(res.data.list);
+                            this.tableData.splice(0,this.tableData.length);
+                            res.data.list.forEach(element=>{
+                                // console.log(element);
+                                this.tableData.push(element);
+                            })
+                    });
+                }   
             },
             turnto_changeIssue(row){
                 this.$store.state.iCreator=row.iCreator;
@@ -268,66 +312,109 @@
             },
             // 序号生成
             indexMethod(index) {
-                return index ++;
+                return index = index + 1;
             },
             submitForm() {
+                this.page_num=1;
+                console.log("date1"+this.issueform.iCdate[0]);
+                console.log("date1"+this.issueform.iCdate[1]);
                 this.tableData.splice(0,this.tableData.length);
-                console.log("state:"+this.issueform.iIssuestate);
-                console.log("ino:"+this.issueform.iNo);
-                if (this.issueform.iNo!=''||this.issueform.iCreator!=''||this.issueform.iChangeperson!=''||this.issueform.iIssuestate!='') {
-                    console.log("!state:"+this.issueform.iIssuestate);
-                    console.log("!ino:"+this.issueform.iNo);
-                    this.$http.post('http://localhost:8080/issue/selectallSelective',{
-                        iCreator:this.issueform.iCreator,
-                        iNo:this.issueform.iNo,
-                        iIssuestate:this.issueform.iIssuestate,
-                        iChangeperson:this.issueform.iChangeperson,
-                        }).then(function (resp) {
-                            console.log(resp.body);
-                            resp.body.forEach(element=>{
-                                console.log(element);
-                                this.tableData.push(element);
-                            })
-                            this.$http.post('http://localhost:8080/issue/selectallSelective',{
-                                iCreator:this.issueform.iCreator,
-                                iNo:this.issueform.iNo,
-                                iIssuestate:this.issueform.iIssuestate,
-                                iChangeperson:this.issueform.iChangeperson,
-                            }).then(function (res) {
-                                this.total_data_num = res.body.length;
-                            })
-                        })
-                }else{
-                    this.$alert('你不能查看和你无关的报表！', {
-                            confirmButtonText: '确定',
-                        }).
-                        then(this.$http.get('http://localhost:8080/issue/selectall').
-                        then(function(res){
-                            this.msg = res.body;
-                            var num = 0;
-                            for (let index = 0; index < this.msg.length; index++) {
-                                const element = this.msg[index];
-                                if (element.iChangeperson==this.$store.state.rName || element.iCreator==(this.$store.state.rId+this.$store.state.rName)){
+                if (this.$store.state.rUserid=='普通用户') {
+                    if (this.issueform.iCreator==''&&this.issueform.iChangeperson==''&&this.issueform.iNo==''&&this.issueform.iIssuestate=='') {
+                        this.$http.post('http://localhost:8080/issue/selectallbynamePage/'+this.$store.state.rName+'/'+1).
+                            then(function(res){
+                                // console.log(res.data.list);
+                                this.tableData.splice(0,this.tableData.length);
+                                res.data.list.forEach(element=>{
+                                    // console.log(element);
                                     this.tableData.push(element);
-                                    num++;
-                                }if (num >= 4) {
-                                    break;
-                                }
-                            };
-                            var num2=0;
-                            for (let index = 0; index < this.msg.length; index++) {
-                                const element = this.msg[index];
-                                if (element.iChangeperson==this.$store.state.rName || element.iCreator==(this.$store.state.rId+this.$store.state.rName)){
-                                    num2++;
-                                }
-                            };
-                            this.total_data_num = num2;
-                        }).catch(function(error){
-                            console.log(error);
-                        })
-                    )
+                                })
+                        });
+                        this.$http.post('http://localhost:8080/issue/selectallSelective',{
+                                    iCreator:this.$store.state.rName,
+                                    iNo:this.issueform.iNo,
+                                    iIssuestate:this.issueform.iIssuestate,
+                                    iChangeperson:this.$store.state.rName,
+                                }).then(function (res) {
+                                    this.total_data_num = res.body.length;
+                                })
+                    }else if (this.issueform.iCreator==''&&this.issueform.iChangeperson=='') {
+                        this.$http.post('http://localhost:8080/issue/selectallSelectivePage/'+1,{
+                            iCreator:this.$store.state.rName,
+                            iChangeperson:this.$store.state.rName,
+                            iNo:this.issueform.iNo,
+                            iIssuestate:this.issueform.iIssuestate,
+                        }).then(function(res){
+                                // console.log(res.data.list);
+                                this.tableData.splice(0,this.tableData.length);
+                                res.data.list.forEach(element=>{
+                                    // console.log(element);
+                                    this.tableData.push(element);
+                                })
+                        });
+                        this.$http.post('http://localhost:8080/issue/selectallSelective',{
+                                    iCreator:this.$store.state.rName,
+                                    iNo:this.issueform.iNo,
+                                    iIssuestate:this.issueform.iIssuestate,
+                                    iChangeperson:this.$store.state.rName,
+                                }).then(function (res) {
+                                    this.total_data_num = res.body.length;
+                                })
+                    }else if (this.issueform.iCreator!==''||this.issueform.iChangeperson!=='') {
+                        console.log("search icreator:"+this.issueform.iCreator);
+                        console.log("search ichanger:"+this.issueform.iChangeperson);
+                        this.$http.post('http://localhost:8080/issue/selectallSelectivePage/'+1,{
+                            iCreator:this.issueform.iCreator,
+                            iChangeperson:this.issueform.iChangeperson,
+                            iNo:this.issueform.iNo,
+                            iIssuestate:this.issueform.iIssuestate,
+                        }).then(function(res){
+                                // console.log(res.data.list);
+                                this.tableData.splice(0,this.tableData.length);
+                                res.data.list.forEach(element=>{
+                                    // console.log(element);
+                                    this.tableData.push(element);
+                                })
+                        });
+                        this.$http.post('http://localhost:8080/issue/selectallSelective',{
+                                    iCreator:this.issueform.iCreator,
+                                    iNo:this.issueform.iNo,
+                                    iIssuestate:this.issueform.iIssuestate,
+                                    iChangeperson:this.issueform.iChangeperson,
+                                }).then(function (res) {
+                                    this.total_data_num = res.body.length;
+                                })
+                    }else{
+                        this.$alert('你不能查看和你无关的报表！', {
+                                confirmButtonText: '确定',
+                            }).
+                            then(this.$http.get('http://localhost:8080/issue/selectall').
+                            then(function(res){
+                                this.msg = res.body;
+                                var num = 0;
+                                for (let index = 0; index < this.msg.length; index++) {
+                                    const element = this.msg[index];
+                                    if (element.iChangeperson==this.$store.state.rName || element.iCreator==(this.$store.state.rId+this.$store.state.rName)){
+                                        this.tableData.push(element);
+                                        num++;
+                                    }if (num >= 4) {
+                                        break;
+                                    }
+                                };
+                                var num2=0;
+                                for (let index = 0; index < this.msg.length; index++) {
+                                    const element = this.msg[index];
+                                    if (element.iChangeperson==this.$store.state.rName || element.iCreator==(this.$store.state.rId+this.$store.state.rName)){
+                                        num2++;
+                                    }
+                                };
+                                this.total_data_num = num2;
+                            }).catch(function(error){
+                                console.log(error);
+                            })
+                        )
+                    }  
                 }
-                
             },
             reset(){
                 this.tableData.splice(0,this.tableData.length);

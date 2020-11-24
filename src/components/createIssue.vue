@@ -41,8 +41,16 @@
                 <el-form-item label="重现步骤" class="col-md-12" prop="iReappear">
                     <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10"></el-input>
                 </el-form-item>
-                <el-form-item label="指派修改人" class="col-md-4" prop="iChangeperson">
-                    <el-input v-model="issueform.iChangeperson"></el-input>
+                <el-form-item label="指派修改人" class="col-md-4" >
+                    <!-- <el-input v-model="issueform.iChangeperson"></el-input> -->
+                    <el-select v-model="issueform.iChangeperson" filterable placeholder="请选择修改人">
+                        <el-option
+                        v-for="item in options"
+                        :key="item.rName"
+                        :label="item.rName"
+                        :value="item.rName">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item class="col-md-12">
                     <el-button type="primary" @click="submitForm('issueform')">提交</el-button>
@@ -69,16 +77,16 @@
 <script>
 export default {
     data() {
-        var checkChinese = (rule, value, callback) => {
-            if (value) {
-                if (!/^[\u2E80-\u9FFF]+$/.test(value)) {
-                callback(new Error('请输入汉字!'));
-                } else {
-                callback();
-                }
-            }
-            callback();
-        }
+        // var checkChinese = (rule, value, callback) => {
+        //     if (value) {
+        //         if (!/^[\u2E80-\u9FFF]+$/.test(value)) {
+        //         callback(new Error('请输入汉字!'));
+        //         } else {
+        //         callback();
+        //         }
+        //     }
+        //     callback();
+        // }
       return {
         msg:[],
         pickerOptions0:{ 
@@ -123,14 +131,14 @@ export default {
             iPlantime: [
                 { type: 'date', required: true, message: '请选择计划时间', trigger: 'change' }
             ],
-            iChangeperson:[
-                { required: true, message: '请输入指派修改人', trigger: 'blur' },
-                { validator: checkChinese, trigger: 'blur' }
-            ],
             iReappear:[
                 { min: 1, max: 2000, message: '长度在 1 到 2000 个字符', trigger: 'blur' },
             ]
-        }
+        },
+        options:[
+
+        ],
+        value:'',
       }
     },
     mounted(){
@@ -140,7 +148,16 @@ export default {
         }).catch(function(error){
             console.log(error);
         })
-        
+        this.$http.get('http://localhost:8080/user/selectall').
+        then(function(resp){
+            this.msg = resp.body;
+                console.log(this.msg);
+                this.msg.forEach(item=>{
+                    if(item.rName != '管理员' && item.rName != this.$store.state.rName){
+                        this.options.push(item);
+                    }
+                });
+        })
     },
     methods: {
         getDate(strDate){

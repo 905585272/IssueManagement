@@ -30,8 +30,8 @@
                 :data="tableData"
                 style="width: 100%"
                 :default-sort = "{prop: 'create_date', order: 'descending'}"
-                :row-class-name="tableRowClassName"
-                @row-click="turnto_changeIssue">
+                @row-click="turnto_changeIssue"
+                >
                 <!-- border -->
                 <!-- stripe -->
                 <el-table-column
@@ -65,14 +65,23 @@
                 <template slot-scope="scope">
                     <el-button
                     size="small"
-                    @click="turnto_changeIssue(scope.row)">
+                    type="danger"
+                    v-if="scope.row.rState === '激活'"
+                    @click="usingCancellation(scope.row)">
                     注销
+                    </el-button>
+                    <el-button
+                    size="small"
+                    type="success"
+                    v-if="scope.row.rState === '注销'"
+                    @click="usingAction(scope.row)">
+                    激活
                     </el-button>
                     <el-button
                     type="primary"
                     size="small"
-                    v-if="promotion"
-                    @click="turnto_changeIssue(scope.row)">
+                    v-if="scope.row.rUserid === '普通用户' && scope.row.rState === '激活'"
+                    @click="updateToManager(scope.row)">
                     经理
                     </el-button>
                 </template>
@@ -160,35 +169,6 @@
                 this.$store.state.iChangeperson=row.iChangeperson;
                 this.$store.state.iHandlemethod=row.iHandlemethod;
                 this.$store.state.iIssuestate=row.iIssuestate;
-                if(row.rUserid == '普通用户'){
-                    row.rUserid = '经理';
-                    this.$http.get('http://localhost:8080/user/selectbyid/'+row.rId).
-                    then(function(res){
-                        console.log(res.data.rId);
-                        this.$http.post('http://localhost:8080/user/update',{
-                            rId:res.data.rId,
-                            rUserid:row.rUserid,
-                        }).then(function(){
-                            this.promotion = false;
-                        })
-                    })
-                }
-            },
-            // 标记状态
-            tableRowClassName({row}) {
-                // console.log(row.issue_state);
-                if (row.rUserid == '经理') {
-                    console.log(row);
-                // return 'warning-row';
-                } 
-                // else if (row.iIssuestate == '关闭') {
-                // return 'success-row';
-                // } else if (row.iIssuestate == '退回') {
-                // return 'danger-row';
-                // }else if(row.iIssuestate == '待修改'){
-                //     return 'changeable-row'
-                // }
-                return '';
             },
             // 序号生成
             indexMethod(index) {
@@ -212,7 +192,41 @@
             },
             goback(){
                 this.$router.go(-1);
-            },  
+            },
+            //
+            usingCancellation(row){
+                row.rState = '注销';
+                this.$http.post('http://localhost:8080/user/update',{
+                    rId:row.rId,
+                    rState:row.rState,
+                }).then(function(res){
+                    console.log(res.data);
+                    // this.cancellation = true;
+                })
+            },
+            //
+            updateToManager(row){
+                if(row.rUserid == '普通用户'){
+                    row.rUserid = '经理';
+                    this.$http.post('http://localhost:8080/user/update',{
+                    rId:row.rId,
+                    rUserid:row.rUserid,
+                    }).then(function(resp){
+                        console.log(resp.data);
+                    })
+                }
+            },
+            //
+            usingAction(row){
+                row.rState = '激活';
+                this.$http.post('http://localhost:8080/user/update',{
+                    rId:row.rId,
+                    rState:row.rState,
+                }).then(function(res){
+                    console.log(res.data);
+                    // this.cancellation = true;
+                })
+            }
         }
     }
 </script>

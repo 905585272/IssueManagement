@@ -92,7 +92,9 @@ export default {
                 this.msg = res.body;
                 console.log(this.msg);
                 this.msg.forEach(item=>{
-                    this.tableData.push(item);
+                    if(item.rUserid != 'admin'){
+                        this.tableData.push(item);
+                    }
                 });
             }).catch(function(error){
                 console.log(error);
@@ -107,14 +109,32 @@ export default {
                 this.$router.go(-1);
         },
         reset(){
+                this.tableData.splice(0,this.tableData.length);
                 this.issueform.rId='';
                 this.issueform.rName='';
+                this.$http.get('http://localhost:8080/user/selectall').
+                then(function(res){
+                    this.msg = res.body;
+                    console.log(this.msg);
+                    this.msg.forEach(item=>{
+                        if(item.rUserid != 'admin'){
+                            this.tableData.push(item);
+                        }
+                    });
+                }).catch(function(error){
+                    console.log(error);
+                })  
         },
         tableRowClassName({row}) {
-                if(row.rMissue == 0 || row.rRissue == 0){
+                if(row.rMissue === 0 || row.rRissue === 0){
+                    // console.log('row.rMissue:' + row.rMissue);
+                    // console.log('row.rRissue:' + row.rRissue);
                     return row.iSuccess = 0 + '%';
                 }else{
-                    return row.iSuccess = Math.round(row.rMissue / row.rRissue) + '%';
+                    console.log('row.rMissue:' + row.rMissue);
+                    console.log('row.rRissue:' + row.rRissue);
+                    console.log('row.iSuccess:' + (row.rMissue / row.rRissue));
+                    return row.iSuccess = ((row.rMissue / row.rRissue)*100).toFixed(0) + '%';
                 }
         },
         turnto_issueList(row){
@@ -133,7 +153,19 @@ export default {
                 // this.$store.state.iChangeperson=row.iChangeperson;
                 // this.$store.state.iHandlemethod=row.iHandlemethod;
                 // this.$store.state.iIssuestate=row.iIssuestate;
-            },
+        },
+        submitForm() {
+            this.$http.post('http://localhost:8080/user/selectAllSelectivepage/1',{
+            rId:this.issueform.rId,
+            rName:this.issueform.rName,
+            }).then(function (userdata) {
+                this.tableData.splice(0,this.tableData.length);
+                console.log(userdata.body.list);
+                userdata.body.list.forEach(element=>{
+                    this.tableData.push(element);
+                })
+            })
+        },
     }
 }
 </script>

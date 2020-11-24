@@ -200,6 +200,7 @@ export default {
         },
         agree_issue(){
             this.$http.post('http://localhost:8080/user/selectallSelective',{
+                rId:"",
                 rName:this.issueform.iChangeperson,
             }).then(function(res){
                 this.msg=res.body;
@@ -226,7 +227,6 @@ export default {
                         this.$alert('该报表还未修改！', {
                             confirmButtonText: '确定',
                         })
-                        // console.log("该报表还未修改！");
                     }
                 });
             });
