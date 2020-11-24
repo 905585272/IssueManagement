@@ -51,6 +51,10 @@
                 </el-table-column>
                 <el-table-column prop="iSuccess" label="完成率"></el-table-column>
             </el-table>
+            <el-pagination
+            background :page-size="4" :pager-count="11" layout="prev, pager, next" :total="total_data_num"
+            @current-change="handleCurrentChange">
+            </el-pagination>
         </div>
     </div>
 </template>
@@ -69,6 +73,7 @@ export default {
                 callback();
             };
         return{
+            total_data_num:1,
             issueform:{
                 rId:'',
                 rName:''
@@ -87,20 +92,45 @@ export default {
         }
     },
     mounted() {
+            // this.$http.get('http://localhost:8080/user/selectall').
+            // then(function(res){
+            //     this.msg = res.body;
+            //     console.log(this.msg);
+            //     this.msg.forEach(item=>{
+            //         if(item.rUserid != 'admin'){
+            //             this.tableData.push(item);
+            //         }
+            //     });
+            // }).catch(function(error){
+            //     console.log(error);
+            // })
             this.$http.get('http://localhost:8080/user/selectall').
             then(function(res){
-                this.msg = res.body;
-                console.log(this.msg);
-                this.msg.forEach(item=>{
-                    if(item.rUserid != 'admin'){
-                        this.tableData.push(item);
+                this.total_data_num = res.data.length;
+                for (let index = 0; index < 4; index++) {
+                    const element = res.body[index];
+                    if(element.rUserid != 'admin'){
+                        this.tableData.push(element);
                     }
-                });
+                }
             }).catch(function(error){
                 console.log(error);
-            })
+            });
     },
     methods:{
+            handleCurrentChange(currentPage){
+                this.$http.get('http://localhost:8080/user/selectallPage/'+currentPage).
+                    then(function(res){
+                        // console.log(res.data.list);
+                        this.tableData.splice(0,this.tableData.length);
+                        res.data.list.forEach(element=>{
+                            // console.log(element);
+                            if (element.rId !== 'admin') {
+                              this.tableData.push(element); 
+                            }
+                        })
+                });
+            },
         // 序号生成
             indexMethod(index) {
                 return index = index + 1;
