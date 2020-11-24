@@ -19,8 +19,8 @@
           </el-button>
         </div>
         <div class="quitbtn col-md-12" v-if="quitable">
-        <el-button type="info" class="white_text" size="small">
-            <h5><i class="el-icon-right white_text"></i>注销</h5>
+        <el-button type="info" class="white_text" size="small" @click="quit">
+            <h5><i class="el-icon-right white_text"></i>退出当前账号</h5>
         </el-button>
         </div>
         <div class="changePage col-md-12" v-if="changeable">
@@ -193,6 +193,27 @@ export default {
     }
   },
   methods:{
+    quit(){
+      this.$store.state.rName = '';
+      // 全局用户数据同步
+      this.$store.state.rId = '',
+      this.$store.state.rName = '',
+      this.$store.state.rEmail = '',
+      this.$store.state.rPwd = '',
+      this.$store.state.rUserid = '',
+      this.$store.state.rState = '',
+      this.$store.state.rCissue = '',
+      this.$store.state.rRissue = '',
+      this.$store.state.rMissue = '',
+      this.$store.state.enterable = true,
+      this.$store.state.entersuccess = false,
+      this.$store.state.registerable = true,
+      this.$store.state.issuereport = false,
+      this.$store.state.changeable = false,
+      this.$store.state.issuelist = false,
+      this.$store.state.iconable = false,
+      this.$store.state.quitable = false;
+    },
     handleClose(done) {
       this.$confirm('确认取消登陆？')
         .then(() => {
@@ -277,9 +298,6 @@ export default {
   beforeDestroy() {
     clearTimeout(this.timer);
   },
-  // quit(){
-
-  // }
 };
 </script>
 

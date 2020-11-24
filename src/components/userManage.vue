@@ -147,7 +147,6 @@
             },
             // 标记状态
             tableRowClassName({row}) {
-                // console.log(row.issue_state);
                 if (row.rUserid == '经理') {
                 return this.promotion = false;
                 } else if (row.rUserid == 'admin') {
