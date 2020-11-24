@@ -28,9 +28,27 @@
                 <el-table-column type="index" label="序号" :index="indexMethod"></el-table-column>
                 <el-table-column prop="rId" label="用户ID"></el-table-column>
                 <el-table-column prop="rName" label="用户姓名"></el-table-column>
-                <el-table-column prop="rCissue" label="创建Issue数"></el-table-column>
-                <el-table-column prop="rRissue" label="收到Issue数"></el-table-column>
-                <el-table-column prop="rMissue" label="修改Issue数"></el-table-column>
+                <el-table-column prop="rCissue" label="创建Issue数">
+                    <template slot-scope="scope">
+                        <router-link to="/issueList" @click="turnto_issueList(scope.row)">
+                            {{scope.row.rCissue}}
+                        </router-link>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="rRissue" label="收到Issue数">
+                    <template slot-scope="scope">
+                        <router-link to="/issueList" @click="turnto_issueList(scope.row)">
+                            {{scope.row.rRissue}}
+                        </router-link>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="rMissue" label="修改Issue数">
+                    <template slot-scope="scope">
+                        <router-link to="/issueList" @click="turnto_issueList(scope.row)">
+                            {{scope.row.rMissue}}
+                        </router-link>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="iSuccess" label="完成率"></el-table-column>
             </el-table>
         </div>
@@ -55,15 +73,6 @@ export default {
                 rId:'',
                 rName:''
             },
-            // tableData:{
-            //     iNo:'',
-            //     rId:'',
-            //     rName:'',
-            //     rCissue:'',
-            //     rRissue:'',
-            //     rMissue:'',
-            //     iSuccess:'',
-            // },
             tableData: [
                 ],
             rules:{
@@ -92,7 +101,7 @@ export default {
     methods:{
         // 序号生成
             indexMethod(index) {
-                return index ++;
+                return index = index + 1;
             },
         goback(){
                 this.$router.go(-1);
@@ -102,8 +111,29 @@ export default {
                 this.issueform.rName='';
         },
         tableRowClassName({row}) {
-                return row.iSuccess = Math.round((row.rMissue / row.rRissue)*100);
+                if(row.rMissue == 0 || row.rRissue == 0){
+                    return row.iSuccess = 0 + '%';
+                }else{
+                    return row.iSuccess = Math.round(row.rMissue / row.rRissue) + '%';
+                }
         },
+        turnto_issueList(row){
+                this.$store.state.rCissue=row.rCissue;
+                this.$store.state.rRissue=row.rRissue;
+                this.$store.state.rMissue=row.rMissue;
+                this.$store.state.rId = row.rId;
+                this.$store.state.rName = row.rName;
+                // this.$store.state.iCdate=row.iCdate;
+                // this.$store.state.iType=row.iType;
+                // this.$store.state.iLevel=row.iLevel;
+                // this.$store.state.iVesion=row.iVesion;
+                // this.$store.state.iPlantime=row.iPlantime;
+                // this.$store.state.iFinishtime=row.iFinishtime;
+                // this.$store.state.iReappear=row.iReappear;
+                // this.$store.state.iChangeperson=row.iChangeperson;
+                // this.$store.state.iHandlemethod=row.iHandlemethod;
+                // this.$store.state.iIssuestate=row.iIssuestate;
+            },
     }
 }
 </script>

@@ -18,7 +18,7 @@
             <h5><i class="el-icon-user-solid white_text"></i>登录</h5>
           </el-button>
         </div>
-        <div class="quitbtn col-md-12" v-if="quitable">
+        <div class="quitbtn col-md-12" v-show="quitable">
         <el-button type="info" class="white_text" size="small" @click="quit">
             <h5><i class="el-icon-right white_text"></i>退出当前账号</h5>
         </el-button>
@@ -35,8 +35,8 @@
         <div class="issueReport col-md-12" v-if="issuereport">
           <router-link to="/issueReport" class="white_text"><h5><i class="el-icon-star-on white_text"></i>Issue报表</h5></router-link>
         </div>
-        <div class="issueReport col-md-12" v-if="admin_flg">
-          <router-link to="/userManage" style="color:#F56C6C"><h5><i class="el-icon-loading"></i>账号管理</h5></router-link>
+        <div class="userManage col-md-12" v-if="admin_flg">
+          <router-link to="/userManage" class="white_text" style="color:#F56C6C"><h5><i class="el-icon-loading"></i>账号管理</h5></router-link>
         </div>
         <div class=" col-md-10" id="producer_list">
           <h4 class="white_text col-md-12">--------关于我们--------</h4>
@@ -182,14 +182,23 @@ export default {
     },1000);
     console.log("!"+this.$store.state.rUserid);
     if (this.$store.state.rUserid == '经理') {
+      this.$store.state.changeable = true;
       this.$store.state.createissue = false;
+      this.$store.state.issuereport = true;
+      this.$store.state.issuelist = true;
       // console.log('是经理');
     }else if(this.$store.state.rUserid == '普通用户'){
+      this.$store.state.changeable = true;
       this.$store.state.createissue = true;
+      this.$store.state.issuereport = false;
+      this.$store.state.issuelist = true;
       // console.log('不是经理');
     }else if (this.$store.state.rUserid == 'admin') {
-      this.$store.state.createissue = false;
       this.admin_flg=true;
+      this.$store.state.changeable = false;
+      this.$store.state.createissue = false;
+      this.$store.state.issuelist = false;
+      this.$store.state.issuereport =false;
     }
   },
   methods:{
@@ -212,7 +221,9 @@ export default {
       this.$store.state.changeable = false,
       this.$store.state.issuelist = false,
       this.$store.state.iconable = false,
-      this.$store.state.quitable = false;
+      this.$store.state.quitable = false,
+      this.$store.state.createissue = false,
+      this.admin_flg=false;
     },
     handleClose(done) {
       this.$confirm('确认取消登陆？')
@@ -256,11 +267,16 @@ export default {
                       this.$store.state.quitable = true,
                       this.drawer=false;
                       if (this.$store.state.rUserid == '经理') {
+                        this.$store.state.changeable = true;
                         this.$store.state.createissue = false;
+                        this.$store.state.issuereport = true;
+                        this.$store.state.issuelist = true;
                         // console.log('是经理');
                       }else if(this.$store.state.rUserid == '普通用户'){
+                        this.$store.state.changeable = true;
                         this.$store.state.createissue = true;
                         this.$store.state.issuereport = false;
+                        this.$store.state.issuelist = true;
                         // console.log('不是经理');
                       }else if (this.$store.state.rUserid == 'admin') {
                         this.admin_flg=true;
@@ -363,6 +379,11 @@ export default {
     line-height: 70px;
   }
   .issueList{
+    height: 5vh;
+    text-align: center;
+    line-height: 70px;
+  }
+  .userManage{
     height: 5vh;
     text-align: center;
     line-height: 70px;

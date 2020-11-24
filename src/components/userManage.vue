@@ -8,10 +8,10 @@
             <div class="issue_menu col-md-9">
                 <el-form :model="userform" :rules="rules" ref="userform" class="row">
                     <el-form-item label="用户ID" class="col-md-6" >
-                        <el-input v-model="userform.iCreator"></el-input>
+                        <el-input v-model="userform.rId"></el-input>
                     </el-form-item>
                     <el-form-item label="用户姓名" prop="iCreator" class="col-md-6" >
-                        <el-input v-model="userform.iChangeperson"></el-input>
+                        <el-input v-model="userform.rName"></el-input>
                     </el-form-item>
                     <el-form-item class="issue_button">
                     <el-button type="primary" @click="submitForm()">查询</el-button>
@@ -29,8 +29,8 @@
             <el-table class="col-md-12 issue_table"
                 :data="tableData"
                 style="width: 100%"
-                :row-class-name="tableRowClassName"
                 :default-sort = "{prop: 'create_date', order: 'descending'}"
+                :row-class-name="tableRowClassName"
                 @row-click="turnto_changeIssue">
                 <!-- border -->
                 <!-- stripe -->
@@ -55,9 +55,6 @@
                 prop="rUserid"
                 label="用户身份">
                 </el-table-column>
-                <!-- <el-table-column prop="r">
-                    
-                </el-table-column> -->
                 <el-table-column
                 prop="rState"
                 label="账号状态">
@@ -81,6 +78,10 @@
                 </template>
                 </el-table-column>
             </el-table>
+            <el-pagination
+            background :page-size="4" :pager-count="11" layout="prev, pager, next" :total="total_data_num"
+            @current-change="handleCurrentChange">
+            </el-pagination>
         </div>
     </div>
 </template>
@@ -99,6 +100,7 @@
                 callback();
             };
             return{
+                total_data_num:1,
                 cancellation:true,
                 promotion:true,
                 userform:{
@@ -121,15 +123,29 @@
         mounted(){
             this.$http.get('http://localhost:8080/user/selectall').
             then(function(res){
-                this.msg = res.body;
-                this.msg.forEach(item=>{
-                    this.tableData.push(item);
-                });
+                this.total_data_num = res.data.length;
+                for (let index = 0; index < 4; index++) {
+                    const element = res.body[index];
+                    this.tableData.push(element);
+                }
             }).catch(function(error){
                 console.log(error);
             });
         },
         methods: {
+            handleCurrentChange(currentPage){
+                this.$http.get('http://localhost:8080/user/selectallPage/'+currentPage).
+                    then(function(res){
+                        // console.log(res.data.list);
+                        this.tableData.splice(0,this.tableData.length);
+                        res.data.list.forEach(element=>{
+                            // console.log(element);
+                            if (element.rId !== 'admin') {
+                              this.tableData.push(element); 
+                            }
+                        })
+                });
+            },
             turnto_changeIssue(row){
                 this.$store.state.iCreator=row.iCreator;
                 this.$store.state.iTitle=row.iTitle;
@@ -144,60 +160,51 @@
                 this.$store.state.iChangeperson=row.iChangeperson;
                 this.$store.state.iHandlemethod=row.iHandlemethod;
                 this.$store.state.iIssuestate=row.iIssuestate;
+                if(row.rUserid == '普通用户'){
+                    row.rUserid = '经理';
+                    this.$http.get('http://localhost:8080/user/selectbyid/'+row.rId).
+                    then(function(res){
+                        console.log(res.data.rId);
+                        this.$http.post('http://localhost:8080/user/update',{
+                            rId:res.data.rId,
+                            rUserid:row.rUserid,
+                        }).then(function(){
+                            this.promotion = false;
+                        })
+                    })
+                }
             },
             // 标记状态
             tableRowClassName({row}) {
+                // console.log(row.issue_state);
                 if (row.rUserid == '经理') {
-                return this.promotion = false;
-                } else if (row.rUserid == 'admin') {
-                return this.promotion = false;
-                } else if(row.rUserid == '普通用户'){
-                    return this.promotion = true;
-                }
+                    console.log(row);
+                // return 'warning-row';
+                } 
+                // else if (row.iIssuestate == '关闭') {
+                // return 'success-row';
+                // } else if (row.iIssuestate == '退回') {
+                // return 'danger-row';
+                // }else if(row.iIssuestate == '待修改'){
+                //     return 'changeable-row'
+                // }
+                return '';
             },
             // 序号生成
             indexMethod(index) {
-                return index ++;
+                return index = index + 1 ;
             },
             submitForm() {
-                // this.$refs[formName].validate((valid) => {
-            //         console.log("data is posting!");
-            //         if (valid) {
-            //             console.log(this.ruleForm.rId); 
-            //             this.$http.get('http://localhost:8080/user/selectall').
-            //             then(function(res){
-            //                 this.msg = res.body;
-            //                 console.log(this.msg.length);
-            //                 var flag=true;
-            //                 this.msg.forEach(item=>{
-            //                     if (item.rId==this.ruleForm.rId) {
-            //                         flag=false;
-            //                         this.$alert('ID重复!', {
-            //                         confirmButtonText: '确定',
-            //                         })
-            //                    }
-            //                 });
-            //                  if (flag) {
-            //                     this.$http.post('http://localhost:8080/user/insert',{
-            //                 }).then(function(resp){
-            //                     console.log(resp);
-            //                     this.$alert('用户注册成功！', {
-            //                         confirmButtonText: '确定',
-            //                     }).then(() => {
-            //                             this.$router.go(-1);
-            //                         })
-            //                 }).catch(function(error){
-            //                     console.log(error);
-            //                 })
-            //                    }
-            //             }).catch(function(error){
-            //                 console.log(error);
-            //             })
-                       
-            //         } else {
-            //             alert('error submit!!');
-            //         }
-                // });
+                 this.$http.post('http://localhost:8080/user/selectallSelective',{
+                    rId:this.userform.rId,
+                    rName:this.userform.rName,
+                 }).then(function (userdata) {
+                     this.tableData.splice(0,this.tableData.length);
+                     console.log(userdata.data);
+                     userdata.data.forEach(element=>{
+                         this.tableData.push(element);
+                     })
+                 })
             },
             reset(){
                 this.userform.rId='';

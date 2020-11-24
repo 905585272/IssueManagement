@@ -173,7 +173,7 @@
                                         this.$store.state.rName = this.ruleForm.rName,
                                         this.$store.state.rEmail = this.ruleForm.rEmail,
                                         this.$store.state.rPwd = this.ruleForm.rPwd,
-                                        this.$store.state.rUserid = this.ruleForm.rUserid,
+                                        this.$store.state.rUserid = '普通用户',
                                         this.$store.state.rState = this.ruleForm.rState,
                                         this.$store.state.rCissue = this.ruleForm.rCissue,
                                         this.$store.state.rRissue = this.ruleForm.rRissue,

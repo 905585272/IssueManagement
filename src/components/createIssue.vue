@@ -154,6 +154,7 @@ export default {
                     if (valid) {
                         this.$http.post('http://localhost:8080/user/selectallSelective',{
                             rName:this.issueform.iChangeperson,
+                            rId:'',
                         }).then(function(res){
                             this.msg=res.body;
                             // console.log("length:"+this.msg.length);
@@ -177,7 +178,7 @@ export default {
                                             this.$http.get('http://localhost:8080/user/selectbyid/'+this.$store.state.rId).
                                             then(function(res){
                                                 // console.log("res:"+this.$store.state.rId);
-                                                // console.log("num:"+parseInt(res.data.rCissue+1));
+                                                console.log("num:"+parseInt(res.data.rCissue+1));
                                                 this.$http.post('http://localhost:8080/user/update',{
                                                 rId:res.data.rId,
                                                 rCissue:parseInt(res.data.rCissue+1),
