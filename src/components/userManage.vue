@@ -66,21 +66,18 @@
                 prop="action"
                 label="操作">
                 <template slot-scope="scope">
-                    <router-link to="/viewIssue" v-if="cancellation">
-                        <el-button
-                        size="small"
-                        @click="turnto_changeIssue(scope.row)">
-                        注销
-                        </el-button>
-                    </router-link>
-                    <router-link to="/changeIssue" v-if="promotion">
-                        <el-button
-                        type="primary"
-                        size="small"
-                        @click="turnto_changeIssue(scope.row)">
-                        经理
-                        </el-button>
-                    </router-link>
+                    <el-button
+                    size="small"
+                    @click="turnto_changeIssue(scope.row)">
+                    注销
+                    </el-button>
+                    <el-button
+                    type="primary"
+                    size="small"
+                    v-if="promotion"
+                    @click="turnto_changeIssue(scope.row)">
+                    经理
+                    </el-button>
                 </template>
                 </el-table-column>
             </el-table>
@@ -155,6 +152,8 @@
                 return this.promotion = false;
                 } else if (row.rUserid == 'admin') {
                 return this.promotion = false;
+                } else if(row.rUserid == '普通用户'){
+                    return this.promotion = true;
                 }
             },
             // 序号生成

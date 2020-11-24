@@ -239,6 +239,7 @@ export default {
                         // console.log('是经理');
                       }else if(this.$store.state.rUserid == '普通用户'){
                         this.$store.state.createissue = true;
+                        this.$store.state.issuereport = false;
                         // console.log('不是经理');
                       }else if (this.$store.state.rUserid == 'admin') {
                         this.admin_flg=true;

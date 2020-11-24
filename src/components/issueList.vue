@@ -240,44 +240,25 @@
                 return index ++;
             },
             submitForm() {
-                // this.$refs[formName].validate((valid) => {
-            //         console.log("data is posting!");
-            //         if (valid) {
-            //             console.log(this.ruleForm.rId); 
-            //             this.$http.get('http://localhost:8080/user/selectall').
-            //             then(function(res){
-            //                 this.msg = res.body;
-            //                 console.log(this.msg.length);
-            //                 var flag=true;
-            //                 this.msg.forEach(item=>{
-            //                     if (item.rId==this.ruleForm.rId) {
-            //                         flag=false;
-            //                         this.$alert('ID重复!', {
-            //                         confirmButtonText: '确定',
-            //                         })
-            //                    }
-            //                 });
-            //                  if (flag) {
-            //                     this.$http.post('http://localhost:8080/user/insert',{
-            //                 }).then(function(resp){
-            //                     console.log(resp);
-            //                     this.$alert('用户注册成功！', {
-            //                         confirmButtonText: '确定',
-            //                     }).then(() => {
-            //                             this.$router.go(-1);
-            //                         })
-            //                 }).catch(function(error){
-            //                     console.log(error);
-            //                 })
-            //                    }
-            //             }).catch(function(error){
-            //                 console.log(error);
-            //             })
-                       
-            //         } else {
-            //             alert('error submit!!');
-            //         }
-                // });
+                for (let index = 0; index < this.tableData.length; index++) {
+                    const element = this.tableData[index];
+                    console.log("data:"+this.tableData[index].iNo);
+                    console.log("i:"+index+" "+"iNo:"+element.iNo);
+                    this.tableData.splice(element,this.tableData.length);
+                }
+                console.log("ino:"+this.issueform.iNo);
+                this.$http.post('http://localhost:8080/issue/selectallSelective',{
+                    iCreator:this.issueform.iCreator,
+                    iNo:parseInt(this.issueform.iNo) ,
+                    iIssuestate:this.issueform.iIssuestate,
+                    }).then(function (resp) {
+                        console.log(resp.body);
+                        this.table_each = resp.body;
+                        this.table_each.forEach(item=>{
+                            this.tableData.push(item);
+                            }
+                        )
+                    })
             },
             reset(){
                 this.issueform.iCreator='';
