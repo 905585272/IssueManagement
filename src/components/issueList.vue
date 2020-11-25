@@ -647,9 +647,8 @@
     }
     .img_body{
     position: relative;
-    background-image: url(https://img.ivsky.com/img/tupian/pic/202005/03/hupo_daoying-002.jpg);
+    background-image: url(~@/assets/hupo_daoying-002.jpg);
     background-size:cover;
-    box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
     height: 937px;
     }
 </style>

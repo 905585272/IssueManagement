@@ -43,11 +43,11 @@
                 </el-form-item>
             
                 <el-form-item label="重现步骤" class="col-md-12" prop="iReappear">
-                    <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" ></el-input>
+                    <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" :rows="10"></el-input>
                 </el-form-item>
 
                 <el-form-item label="解决方案" class="col-md-12" prop="iHandlemethod" v-if="show_flg">
-                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" ></el-input>
+                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" :rows="10"></el-input>
                 </el-form-item>
 
                 <el-form-item label="指派修改人" class="col-md-4">
@@ -67,13 +67,13 @@
 
 <style scoped>
     .page_title{
-        margin:3% auto;
+        margin:5% auto;
     }
     .el-textarea__inner{
         height:100px;
     }
     .body{
-        margin:10% auto;
+        margin:20px auto;
     }
 </style>
 
@@ -124,6 +124,7 @@ export default {
                 { type: 'date', required: true, message: '请选择计划时间', trigger: 'change' }
             ],
             iHandlemethod:[
+                { required: true,message: '请输入解决方案',trigger: 'blur' },
                 { min: 1, max: 200, message: '长度在 1 到 2000 个字符', trigger: 'blur' },
             ],
         }

@@ -1,13 +1,13 @@
 <template>
-    <div class="container">
-        <div class="query_title col-md-12">
+    <div class="container col-md-12" id="big_body">
+        <div class="query_title col-md-8">
             <h5 class="text-left"><b>查询条件</b></h5>
             <el-divider></el-divider>
         </div>
-        <div class="query_content col-md-10">
+        <div class="query_content col-md-6">
             <el-form :model="issueform" :rules="rules" ref="issueform" class="row">
-                <el-form-item label="用户 ID" prop="rId" class="col-md-5" >
-                    <el-input v-model="issueform.rId"></el-input>
+                <el-form-item label="用户 ID" prop="rId" class="col-md-6" >
+                    <el-input v-model="issueform.rId" class="col-md-11"></el-input>
                 </el-form-item>
                 <el-form-item label="用户姓名" prop="rName" class="col-md-5" >
                     <el-input v-model="issueform.rName"></el-input>
@@ -19,12 +19,14 @@
                 </el-form-item>
             </el-form>
         </div>
-        <div class="report_title col-md-12"> 
+        <div class="col-md-12" style="height:5vh"></div>
+        <div class="report_title col-md-8"> 
             <h5 class="text-left"><b>统计报表</b></h5>
             <el-divider></el-divider>
         </div>
-        <div class="report_content col-md-12">
-            <el-table :row-class-name="tableRowClassName" :data="tableData" stripe border style="width:100%" :default-sort = "{prop: 'create_date', order: 'descending'}">
+        <div class="col-md-12" style="height:5vh"></div>
+        <div class="report_content col-md-8">
+            <el-table class="issue_table" :row-class-name="tableRowClassName" :data="tableData" stripe border style="width:100%" :default-sort="{prop: 'create_date', order: 'descending'}">
                 <el-table-column type="index" label="序号" :index="indexMethod"></el-table-column>
                 <el-table-column prop="rId" label="用户ID"></el-table-column>
                 <el-table-column prop="rName" label="用户姓名"></el-table-column>
@@ -218,5 +220,36 @@ export default {
 </script>
 
 <style scoped>
-
+    #big_body{
+        height: 100vh;
+        background-image: url(~@/assets/luori-006.jpg);
+        background-size:cover;
+        -o-background-size: cover;
+        background-repeat: no-repeat;
+    }
+    .query_content{
+        background-color: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
+        margin: 20px auto;
+        border-radius: 10px;
+    }
+    .report_content{
+        margin: 20px auto;
+    }
+    .el-table{
+        border-radius: 15px;
+        opacity: 0.8;
+    }
+    .query_title{
+        color: #d3d3d3;
+        margin: 0 auto;
+    }
+    .report_title{
+        color: #d3d3d3;
+        margin: 20px auto;
+    }
+    .issue_table{
+        margin: 20px auto;
+        border-radius: 15px;
+    }
 </style>

@@ -1,96 +1,98 @@
 <template>
-    <div class="container">
-        <div>
-            <div class="titlea col-md-12">
-                <h5 class="text-left"><b>账号管理</b></h5>
-                <el-divider></el-divider>
+    <div class="col-md-12" id="usermanage_body">
+        <div class="container">
+            <div>
+                <div class="titlea col-md-12">
+                    <h5 class="text-left"><b>账号管理</b></h5>
+                    <el-divider></el-divider>
+                </div>
+                <div class="issue_menu col-md-9">
+                    <el-form :model="userform" :rules="rules" ref="userform" class="row">
+                        <el-form-item label="用户ID" class="col-md-6" >
+                            <el-input v-model="userform.rId"></el-input>
+                        </el-form-item>
+                        <el-form-item label="用户姓名" prop="iCreator" class="col-md-6" >
+                            <el-input v-model="userform.rName"></el-input>
+                        </el-form-item>
+                        <el-form-item class="issue_button">
+                        <el-button type="primary" @click="submitForm()">查询</el-button>
+                        <el-button type="button" @click="reset()">清空</el-button>
+                        <el-button type="button" @click="goback()">返回</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
             </div>
-            <div class="issue_menu col-md-9">
-                <el-form :model="userform" :rules="rules" ref="userform" class="row">
-                    <el-form-item label="用户ID" class="col-md-6" >
-                        <el-input v-model="userform.rId"></el-input>
-                    </el-form-item>
-                    <el-form-item label="用户姓名" prop="iCreator" class="col-md-6" >
-                        <el-input v-model="userform.rName"></el-input>
-                    </el-form-item>
-                    <el-form-item class="issue_button">
-                    <el-button type="primary" @click="submitForm()">查询</el-button>
-                    <el-button type="button" @click="reset()">清空</el-button>
-                    <el-button type="button" @click="goback()">返回</el-button>
-                    </el-form-item>
-                </el-form>
+            <div class="col-md-12">
+                <div class="titlea col-md-12">
+                    <h5 class="text-left"><b>账号列表</b></h5>
+                    <el-divider></el-divider>
+                </div>
+                <el-table class="col-md-8 issue_table"
+                    :data="tableData"
+                    style="width: 100%"
+                    :default-sort="{prop: 'create_date', order: 'descending'}"
+                    @row-click="turnto_changeIssue"
+                    >
+                    <!-- border -->
+                    <!-- stripe -->
+                    <el-table-column
+                    type="index"
+                    label="序号"
+                    :index="indexMethod">
+                    </el-table-column>
+                    <el-table-column
+                    prop="rId"
+                    label="用户ID">
+                    </el-table-column>
+                    <el-table-column
+                    prop="rName"
+                    label="用户姓名">
+                    </el-table-column>
+                    <el-table-column
+                    prop="rEmail"
+                    label="邮箱">
+                    </el-table-column>
+                    <el-table-column
+                    prop="rUserid"
+                    label="用户身份">
+                    </el-table-column>
+                    <el-table-column
+                    prop="rState"
+                    label="账号状态">
+                    </el-table-column>
+                    <el-table-column
+                    prop="action"
+                    label="操作">
+                    <template slot-scope="scope">
+                        <el-button
+                        size="small"
+                        type="danger"
+                        v-if="scope.row.rState === '激活'"
+                        @click="usingCancellation(scope.row)">
+                        注销
+                        </el-button>
+                        <el-button
+                        size="small"
+                        type="success"
+                        v-if="scope.row.rState === '注销'"
+                        @click="usingAction(scope.row)">
+                        激活
+                        </el-button>
+                        <el-button
+                        type="primary"
+                        size="small"
+                        v-if="scope.row.rUserid === '普通用户' && scope.row.rState === '激活'"
+                        @click="updateToManager(scope.row)">
+                        经理
+                        </el-button>
+                    </template>
+                    </el-table-column>
+                </el-table>
+                <el-pagination
+                background :page-size="4" :pager-count="11" layout="prev, pager, next" :total="total_data_num"
+                @current-change="handleCurrentChange">
+                </el-pagination>
             </div>
-        </div>
-        <div class="col-md-12">
-            <div class="titlea col-md-12">
-                <h5 class="text-left"><b>账号列表</b></h5>
-                <el-divider></el-divider>
-            </div>
-            <el-table class="col-md-12 issue_table"
-                :data="tableData"
-                style="width: 100%"
-                :default-sort = "{prop: 'create_date', order: 'descending'}"
-                @row-click="turnto_changeIssue"
-                >
-                <!-- border -->
-                <!-- stripe -->
-                <el-table-column
-                type="index"
-                label="序号"
-                :index="indexMethod">
-                </el-table-column>
-                <el-table-column
-                prop="rId"
-                label="用户ID">
-                </el-table-column>
-                <el-table-column
-                prop="rName"
-                label="用户姓名">
-                </el-table-column>
-                <el-table-column
-                prop="rEmail"
-                label="邮箱">
-                </el-table-column>
-                <el-table-column
-                prop="rUserid"
-                label="用户身份">
-                </el-table-column>
-                <el-table-column
-                prop="rState"
-                label="账号状态">
-                </el-table-column>
-                <el-table-column
-                prop="action"
-                label="操作">
-                <template slot-scope="scope">
-                    <el-button
-                    size="small"
-                    type="danger"
-                    v-if="scope.row.rState === '激活'"
-                    @click="usingCancellation(scope.row)">
-                    注销
-                    </el-button>
-                    <el-button
-                    size="small"
-                    type="success"
-                    v-if="scope.row.rState === '注销'"
-                    @click="usingAction(scope.row)">
-                    激活
-                    </el-button>
-                    <el-button
-                    type="primary"
-                    size="small"
-                    v-if="scope.row.rUserid === '普通用户' && scope.row.rState === '激活'"
-                    @click="updateToManager(scope.row)">
-                    经理
-                    </el-button>
-                </template>
-                </el-table-column>
-            </el-table>
-            <el-pagination
-            background :page-size="4" :pager-count="11" layout="prev, pager, next" :total="total_data_num"
-            @current-change="handleCurrentChange">
-            </el-pagination>
         </div>
     </div>
 </template>
@@ -278,13 +280,23 @@
             }
         }
     }
+    // background-image: url(http://img.netbian.com/file/2020/1012/a784002636c0365496d42af615d63f97.jpg);
 </script>
 
 <style>
+    #usermanage_body{
+        background-image: url(~@/assets/ground.jpg);
+        height: 100vh;
+        background-size:cover;
+        -o-background-size: cover;
+        background-repeat: no-repeat;
+    }
     .issue_menu{
-        /* border-radius: 2px; */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
         margin: 20px auto;
+        background-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
+        margin: 20px auto;
+        border-radius: 10px;
     }
     .issue_button{
         margin: 20px auto;
@@ -299,6 +311,7 @@
         background: #F56C6C;
     }
     .issue_table{
+        border-radius: 10px;
         margin: 20px auto;
     }
 </style>

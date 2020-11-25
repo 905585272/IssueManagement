@@ -38,11 +38,11 @@
                 </el-form-item>
             
                 <el-form-item label="重现步骤" class="col-md-12">
-                    <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" ReadOnly></el-input>
+                    <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" ReadOnly :rows="10"></el-input>
                 </el-form-item>
 
                 <el-form-item label="解决方案" class="col-md-12" v-if="show_flg">
-                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" ReadOnly></el-input>
+                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" ReadOnly :rows="10"></el-input>
                 </el-form-item>
 
                 <el-form-item label="指派修改人" class="col-md-4">
@@ -59,13 +59,13 @@
 
 <style scoped>
     .page_title{
-        margin:3% auto;
+        margin:5% auto;
     }
     .el-textarea__inner{
         height:100px;
     }
     .body{
-        margin:10% auto;
+        margin:20px auto;
     }
 </style>
 

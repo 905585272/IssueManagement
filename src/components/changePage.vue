@@ -1,32 +1,34 @@
 <template>
-    <div class="container">
-        <div id="change_info_title">
-            <h5 class="text-left"><b>修改信息</b></h5>
-            <hr>
+    <div class="img_body">
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="text-center">修改信息</h1>
+                <hr>
+            </div>
+            <div id="change_body">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+                    <el-form-item label="登录ID：" prop="rId" class="col-md-8">
+                        <el-input v-model="ruleForm.rId" disabled="disabled"></el-input>
+                    </el-form-item>
+                    <el-form-item label="姓名：" prop="rName" class="col-md-8">
+                        <el-input v-model="ruleForm.rName" ></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮箱：" prop="rEmail" class="col-md-8">
+                        <el-input v-model="ruleForm.rEmail" type="email"></el-input>
+                    </el-form-item>
+                    <el-form-item label="修改密码：" prop="rPwd" class="col-md-8">
+                        <el-input v-model="ruleForm.rPwd" show-password></el-input>
+                    </el-form-item>
+                    <el-form-item label="确认密码：" prop="final_passwd" class="col-md-8">
+                        <el-input v-model="ruleForm.final_passwd" show-password></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                    <el-button type="primary" @click="submitForm('ruleForm')">确认</el-button>
+                    <el-button type="button" @click="goback()">返回</el-button>
+                    </el-form-item>
+                </el-form>
+            </div> 
         </div>
-        <div id="change_body">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-                <el-form-item label="登录ID：" prop="rId" class="col-md-8">
-                    <el-input v-model="ruleForm.rId" disabled="disabled"></el-input>
-                </el-form-item>
-                <el-form-item label="姓名：" prop="rName" class="col-md-8">
-                    <el-input v-model="ruleForm.rName" ></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱：" prop="rEmail" class="col-md-8">
-                    <el-input v-model="ruleForm.rEmail" type="email"></el-input>
-                </el-form-item>
-                <el-form-item label="修改密码：" prop="rPwd" class="col-md-8">
-                    <el-input v-model="ruleForm.rPwd" show-password></el-input>
-                </el-form-item>
-                <el-form-item label="确认密码：" prop="final_passwd" class="col-md-8">
-                    <el-input v-model="ruleForm.final_passwd" show-password></el-input>
-                </el-form-item>
-                <el-form-item>
-                <el-button type="primary" @click="submitForm('ruleForm')">确认</el-button>
-                <el-button type="button" @click="goback()">返回</el-button>
-                </el-form-item>
-            </el-form>
-        </div> 
     </div>
 </template>
 
@@ -34,9 +36,26 @@
     .el-form-item{
         margin:20px auto;
         text-align: center;
+        margin-bottom: 20px;
+    }
+    .el-button{
+        
+        margin-bottom: 20px;
     }
     #change_body{
-        margin:15% auto;
+        width: 50%;
+        margin:10% auto;
+        border-radius: 15px;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
+        background: rgba(255, 255, 255, 0.3);
+    }
+    .img_body{
+        background-image: url(~@/assets/gancaoduo-014.jpg);
+        background-size:cover;
+        height: 937px;
+    }
+    .jumbotron{
+        background: rgba(255, 255, 255, 0.3);
     }
 </style>
 

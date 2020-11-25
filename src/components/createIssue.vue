@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="img_body">
     <div class="container">
         <div class="col-md-12 page_title">
             <el-form class="form-horizontal row" role="form" :rules="rules" :model="issueform" ref="issueform">
@@ -39,7 +39,7 @@
                 </el-form-item>
 
                 <el-form-item label="重现步骤" class="col-md-12" prop="iReappear">
-                    <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10"></el-input>
+                    <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" :rows="10"></el-input>
                 </el-form-item>
                 <el-form-item label="指派修改人" class="col-md-4" >
                     <!-- <el-input v-model="issueform.iChangeperson"></el-input> -->
@@ -64,29 +64,28 @@
 
 <style scoped>
     .page_title{
-        margin:3% auto;
+        margin-bottom: 20px;
     }
     .el-textarea__inner{
         height:100px;
     }
     .body{
-        margin:10% auto;
+        margin:20px auto;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.3);
+    }
+    .img_body{
+    position: relative;
+    background-image: url(~@/assets/hupo_daoying-002.jpg);
+    background-size:cover;
+    height: 937px;
     }
 </style>
 
 <script>
 export default {
     data() {
-        // var checkChinese = (rule, value, callback) => {
-        //     if (value) {
-        //         if (!/^[\u2E80-\u9FFF]+$/.test(value)) {
-        //         callback(new Error('请输入汉字!'));
-        //         } else {
-        //         callback();
-        //         }
-        //     }
-        //     callback();
-        // }
       return {
         msg:[],
         pickerOptions0:{ 
@@ -153,7 +152,7 @@ export default {
             this.msg = resp.body;
                 console.log(this.msg);
                 this.msg.forEach(item=>{
-                    if(item.rName != '管理员' && item.rName != this.$store.state.rName){
+                    if(item.rUserid !== 'Admin' && item.rName !== this.$store.state.rName && item.rUserid !== '经理'){
                         this.options.push(item);
                     }
                 });
