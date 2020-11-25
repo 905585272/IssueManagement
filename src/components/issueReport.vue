@@ -92,18 +92,6 @@ export default {
         }
     },
     mounted() {
-            // this.$http.get('http://localhost:8080/user/selectall').
-            // then(function(res){
-            //     this.msg = res.body;
-            //     console.log(this.msg);
-            //     this.msg.forEach(item=>{
-            //         if(item.rUserid != 'admin'){
-            //             this.tableData.push(item);
-            //         }
-            //     });
-            // }).catch(function(error){
-            //     console.log(error);
-            // })
             this.$http.get('http://localhost:8080/user/selectall').
             then(function(res){
                 this.total_data_num = res.data.length;
@@ -135,9 +123,11 @@ export default {
             indexMethod(index) {
                 return index = index + 1;
             },
+        //返回功能
         goback(){
                 this.$router.go(-1);
         },
+        //清空设置
         reset(){
                 this.tableData.splice(0,this.tableData.length);
                 this.issueform.rId='';
@@ -157,8 +147,6 @@ export default {
         },
         tableRowClassName({row}) {
                 if(row.rMissue === 0 || row.rRissue === 0){
-                    // console.log('row.rMissue:' + row.rMissue);
-                    // console.log('row.rRissue:' + row.rRissue);
                     return row.iSuccess = 0 + '%';
                 }else{
                     console.log('row.rMissue:' + row.rMissue);
@@ -173,16 +161,6 @@ export default {
                 this.$store.state.rMissue=row.rMissue;
                 this.$store.state.rId = row.rId;
                 this.$store.state.rName = row.rName;
-                // this.$store.state.iCdate=row.iCdate;
-                // this.$store.state.iType=row.iType;
-                // this.$store.state.iLevel=row.iLevel;
-                // this.$store.state.iVesion=row.iVesion;
-                // this.$store.state.iPlantime=row.iPlantime;
-                // this.$store.state.iFinishtime=row.iFinishtime;
-                // this.$store.state.iReappear=row.iReappear;
-                // this.$store.state.iChangeperson=row.iChangeperson;
-                // this.$store.state.iHandlemethod=row.iHandlemethod;
-                // this.$store.state.iIssuestate=row.iIssuestate;
         },
         submitForm() {
             this.$http.post('http://localhost:8080/user/selectAllSelectivepage/1',{

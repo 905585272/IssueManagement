@@ -109,6 +109,8 @@
                 callback();
             };
             return{
+                push_index:0,
+                data_list:[],
                 total_data_num:1,
                 cancellation:true,
                 promotion:true,
@@ -137,23 +139,30 @@
                     const element = res.body[index];
                     this.tableData.push(element);
                 }
+                res.body.forEach(element=>{
+                    if(element.rUserid != 'admin'){
+                        this.data_list.push(element);
+                    }
+                this.total_data_num = res.body.length;
+                })
             }).catch(function(error){
                 console.log(error);
             });
         },
         methods: {
             handleCurrentChange(currentPage){
-                this.$http.get('http://localhost:8080/user/selectallPage/'+currentPage).
-                    then(function(res){
-                        // console.log(res.data.list);
-                        this.tableData.splice(0,this.tableData.length);
-                        res.data.list.forEach(element=>{
-                            // console.log(element);
-                            if (element.rId !== 'admin') {
-                              this.tableData.push(element); 
-                            }
-                        })
-                });
+                this.push_index=(currentPage-1)*4;
+                this.tableData.splice(0,this.tableData.length);
+                    for (let index = 0; index < 4; index++) {
+                        // console.log("page:"+index);
+                        if (this.push_index<this.data_list.length) {
+                            const element = this.data_list[this.push_index++];
+                            console.log("page:"+element);
+                            this.tableData.push(element);
+                        }else{
+                            break;
+                        }
+                    }
             },
             turnto_changeIssue(row){
                 this.$store.state.iCreator=row.iCreator;
@@ -175,20 +184,60 @@
                 return index = index + 1 ;
             },
             submitForm() {
-                 this.$http.post('http://localhost:8080/user/selectallSelective',{
-                    rId:this.userform.rId,
-                    rName:this.userform.rName,
-                 }).then(function (userdata) {
-                     this.tableData.splice(0,this.tableData.length);
-                     console.log(userdata.data);
-                     userdata.data.forEach(element=>{
-                         this.tableData.push(element);
-                     })
-                 })
+                this.data_list.splice(0,this.data_list.length);
+                this.page_num=1;
+                this.$http.post('http://localhost:8080/user/selectallSelective',{
+                rId:this.userform.rId,
+                rName:this.userform.rName,
+                }).then(function (userdata) {
+                    this.tableData.splice(0,this.tableData.length);
+                    console.log(userdata.body);
+                    userdata.body.forEach(element=>{
+                    //  this.tableData.push(element);
+                        console.log("element:"+element.rName);
+                        this.data_list.push(element);
+                    })
+                }).then(function () {
+                    console.log("data list:"+this.data_list);
+                    if (this.data_list.length>=4) {
+                        for (let index = 0; index < 4; index++) {
+                            this.push_index = index;
+                            const element = this.data_list[index];
+                            
+                            this.tableData.push(element);
+                        }
+                    }
+                    else{
+                        for (let index = 0; index < this.data_list.length; index++) {
+                            this.push_index = index;
+                            const element = this.data_list[index];
+                            this.tableData.push(element);
+                        }
+                    }   
+                    this.total_data_num=this.data_list.length;
+                })
             },
             reset(){
+                this.data_list.splice(0,this.data_list.length);
+                this.tableData.splice(0,this.tableData.length);
                 this.userform.rId='';
                 this.userform.rName='';
+                this.$http.get('http://localhost:8080/user/selectall').
+                then(function(res){
+                    this.total_data_num = res.data.length;
+                    for (let index = 0; index < 4; index++) {
+                        const element = res.body[index];
+                        this.tableData.push(element);
+                    }
+                    res.body.forEach(element=>{
+                        if(element.rUserid != 'admin'){
+                            this.data_list.push(element);
+                        }
+                    })
+                }).catch(function(error){
+                    console.log(error);
+                });
+                this.total_data_num=this.data_list.length;
             },
             goback(){
                 this.$router.go(-1);

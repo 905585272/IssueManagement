@@ -11,7 +11,11 @@
               <h5><i class="el-icon-s-help white_text"></i>注册</h5>
             </el-button>
           </router-link>
-          <div class="block"><el-avatar shape="square" :size="70" :src="squareUrl" v-if="iconable"></el-avatar></div>
+          <div class="block">
+            <el-avatar shape="square" :size="70" :fit="fits" :src="squareUrl" v-if="iconable"></el-avatar>
+            <el-avatar shape="square" :size="70" :fit="fits" :src="squareUrlTwo" v-if="iconableTwo"></el-avatar>
+            <el-avatar shape="square" :size="70" :fit="fits" :src="squareUrlThree" v-if="iconableThree"></el-avatar>
+            </div>
         </div>
         <div class="enterPage col-md-12" v-if="enterable">
           <el-button @click="drawer = true" type="primary" class="white_text" >
@@ -116,7 +120,10 @@
 export default {
   data(){
     return{
-      squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
+      fits:'fill',
+      squareUrl: "https://wx2.sinaimg.cn/mw690/0061Qq8Vly1gh7qredom7j30jg0jg0ur.jpg",
+      squareUrlTwo:"https://wx4.sinaimg.cn/mw690/0061Qq8Vly1gh7qrf1b2bj30jg0jg75z.jpg",
+      squareUrlThree:"https://wx1.sinaimg.cn/mw690/0061Qq8Vly1gh7qrdspvsj30jg0jg0uo.jpg",
       timer:'',
       time:'',
       ruleForm:{
@@ -167,6 +174,12 @@ export default {
     },
     iconable(){
       return this.$store.state.iconable;
+    },
+    iconableTwo(){
+      return this.$store.state.iconableTwo;
+    },
+    iconableThree(){
+      return this.$store.state.iconableThree;
     },
     quitable(){
       return this.$store.state.quitable;
@@ -221,6 +234,8 @@ export default {
       this.$store.state.changeable = false,
       this.$store.state.issuelist = false,
       this.$store.state.iconable = false,
+      this.$store.state.iconableTwo = false,
+      this.$store.state.iconableThree = false,
       this.$store.state.quitable = false,
       this.$store.state.createissue = false,
       this.admin_flg=false;
@@ -267,7 +282,6 @@ export default {
                       this.$store.state.issuereport = true,
                       this.$store.state.changeable = true,
                       this.$store.state.issuelist = true,
-                      this.$store.state.iconable = true,
                       this.$store.state.quitable = true,
                       this.drawer=false;
                       if (this.$store.state.rUserid == '经理') {
@@ -275,12 +289,14 @@ export default {
                         this.$store.state.createissue = false;
                         this.$store.state.issuereport = true;
                         this.$store.state.issuelist = true;
+                        this.$store.state.iconable = true;
                         // console.log('是经理');
                       }else if(this.$store.state.rUserid == '普通用户'){
                         this.$store.state.changeable = true;
                         this.$store.state.createissue = true;
                         this.$store.state.issuereport = false;
                         this.$store.state.issuelist = true;
+                        this.$store.state.iconableTwo = true;
                         // console.log('不是经理');
                       }else if (this.$store.state.rUserid == 'admin') {
                         this.admin_flg=true;
@@ -288,6 +304,7 @@ export default {
                         this.$store.state.createissue = false;
                         this.$store.state.issuelist = false;
                         this.$store.state.issuereport =false;
+                        this.$store.state.iconableThree = true;
                       }
                     this.$alert('欢迎使用', {
                         confirmButtonText: '确定',
