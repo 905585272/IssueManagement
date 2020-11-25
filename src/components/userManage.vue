@@ -136,7 +136,7 @@
             then(function(res){
                 this.total_data_num = res.data.length;
                 res.body.forEach(element=>{
-                    if(element.rUserid !== 'admin'){
+                    if(element.rUserid !== 'Admin'){
                         this.data_list.push(element);
                     }
                 })
@@ -226,7 +226,7 @@
                 then(function(res){
                     this.total_data_num = res.data.length;
                     res.body.forEach(element=>{
-                        if(element.rUserid != 'admin'){
+                        if(element.rUserid != 'Admin'){
                             this.data_list.push(element);
                         }
                     })

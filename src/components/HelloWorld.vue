@@ -193,25 +193,28 @@ export default {
       second = new Date().getSeconds();
       this.time = hour+":"+minute+":"+second;
     },1000);
-    console.log("!"+this.$store.state.rUserid);
+    // console.log("!"+this.$store.state.rUserid);
     if (this.$store.state.rUserid == '经理') {
       this.$store.state.changeable = true;
       this.$store.state.createissue = false;
       this.$store.state.issuereport = true;
       this.$store.state.issuelist = true;
+      this.$store.state.quitable = true;
       // console.log('是经理');
     }else if(this.$store.state.rUserid == '普通用户'){
       this.$store.state.changeable = true;
       this.$store.state.createissue = true;
       this.$store.state.issuereport = false;
       this.$store.state.issuelist = true;
+      this.$store.state.quitable = true;
       // console.log('不是经理');
-    }else if (this.$store.state.rUserid == 'admin') {
+    }else if (this.$store.state.rUserid == 'Admin') {
       this.admin_flg=true;
       this.$store.state.changeable = false;
       this.$store.state.createissue = false;
       this.$store.state.issuelist = false;
       this.$store.state.issuereport =false;
+      this.$store.state.quitable = true;
     }
   },
   methods:{
@@ -298,7 +301,7 @@ export default {
                         this.$store.state.issuelist = true;
                         this.$store.state.iconableTwo = true;
                         // console.log('不是经理');
-                      }else if (this.$store.state.rUserid == 'admin') {
+                      }else if (this.$store.state.rUserid == 'Admin') {
                         this.admin_flg=true;
                         this.$store.state.changeable = false;
                         this.$store.state.createissue = false;

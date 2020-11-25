@@ -6,10 +6,10 @@
         </div>
         <div class="query_content col-md-10">
             <el-form :model="issueform" :rules="rules" ref="issueform" class="row">
-                <el-form-item label="用户 ID" class="col-md-5" >
+                <el-form-item label="用户 ID" prop="rId" class="col-md-5" >
                     <el-input v-model="issueform.rId"></el-input>
                 </el-form-item>
-                <el-form-item label="用户姓名" class="col-md-5" >
+                <el-form-item label="用户姓名" prop="rName" class="col-md-5" >
                     <el-input v-model="issueform.rName"></el-input>
                 </el-form-item>
                 <el-form-item class="issue_button">
@@ -99,7 +99,7 @@ export default {
                 this.total_data_num = res.data.length;
                 for (let index = 0; index < 4; index++) {
                     const element = res.body[index];
-                    if(element.rUserid != 'admin'){
+                    if(element.rUserid != 'Admin'){
                         this.tableData.push(element);
                     }
                 }
@@ -115,7 +115,7 @@ export default {
                     this.tableData.splice(0,this.tableData.length);
                     res.data.list.forEach(element=>{
                         // console.log(element);
-                        if (element.rId !== 'admin') {
+                        if (element.rUserid !== 'Admin') {
                             this.tableData.push(element); 
                         }
                     })
@@ -144,7 +144,7 @@ export default {
                         this.tableData.push(element);
                     }
                     res.body.forEach(element=>{
-                        if(element.rUserid != 'admin'){
+                        if(element.rUserid != 'Admin'){
                             this.data_list.push(element);
                         }
                     })

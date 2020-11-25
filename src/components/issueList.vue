@@ -8,10 +8,10 @@
             <div class="issue_menu col-md-9">
                 <el-form :model="issueform" :rules="rules" ref="issueform" class="row">
                     <el-form-item label="Issue ID" prop="iNo" class="col-md-3">
-                        <el-input v-model="issueform.iNo" readonly="readonly"></el-input>
+                        <el-input v-model="issueform.iNo" :readonly='readonly'></el-input>
                     </el-form-item>
                     <el-form-item label="Issue状态" class="col-md-3" >
-                        <el-select v-model="issueform.iIssuestate" placeholder="请选择Issue状态" disabled='disabled'>
+                        <el-select v-model="issueform.iIssuestate" placeholder="请选择Issue状态" :disabled='disabled'>
                             <el-option label="待验证" value="待验证" name="iIssuestate"></el-option>
                             <el-option label="关闭" value="关闭" name="iIssuestate"></el-option>
                             <el-option label="待修改" value="待修改" name="iIssuestate"></el-option>
@@ -25,14 +25,14 @@
                             range-separator="-"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"
-                            readonly="readonly">
+                            :readonly='readonly'>
                         </el-date-picker>
                     </el-form-item>
-                    <el-form-item label="创建人" class="col-md-3">
-                        <el-input v-model="issueform.iCreator" readonly="readonly"></el-input>
+                    <el-form-item label="创建人" prop="iCreator" class="col-md-3" >
+                        <el-input v-model="issueform.iCreator" :readonly='readonly'></el-input>
                     </el-form-item>
-                    <el-form-item label="修改人" prop="iCreator" class="col-md-3">
-                        <el-input id="change_person" v-model="issueform.iChangeperson" readonly="readonly"></el-input>
+                    <el-form-item label="修改人" prop="iChangeperson" class="col-md-3">
+                        <el-input id="change_person" v-model="issueform.iChangeperson" :readonly='readonly'></el-input>
                     </el-form-item>
                     <el-form-item label="修改时间" class="col-md-6">
                         <el-date-picker 
@@ -42,12 +42,12 @@
                             range-separator="-"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期" 
-                            readonly='readonly'>
+                            :readonly='readonly'>
                         </el-date-picker>
                     </el-form-item>
                     <el-form-item class="issue_button">
-                    <el-button type="primary" @click="submitForm()" disabled='disabled'>查询</el-button>
-                    <el-button type="button" @click="reset()" disabled='disabled'>清空</el-button>
+                    <el-button type="primary" @click="submitForm()" :disabled='disabled'>查询</el-button>
+                    <el-button type="button" @click="reset()" :disabled='disabled'>清空</el-button>
                     <el-button type="button" @click="goback()">返回</el-button>
                     </el-form-item>
                 </el-form>
@@ -191,7 +191,9 @@
             this.data_list.splice(0,this.data_list.length);
             //确定进入列表的操作模式
             //报表跳转
-            if (this.$store.state.temporary_name!==undefined&&this.$store.state.identity!==undefined) {
+            console.log("temporary_name:"+this.$store.state.temporary_name);
+            console.log("indentity:"+this.$store.state.identity);
+            if (this.$store.state.temporary_name!==''&&this.$store.state.identity!=='') {
                 console.log("success!");
                 this.tableData.splice(0,this.tableData.length);
                 this.disabled=true;
@@ -600,9 +602,12 @@
             }
             },
             goback(){
+                // 复位
                 this.$router.go(-1);
-                // this.$store.state.temporary_name='',
-                // this.$store.state.identity=''
+                this.$store.state.temporary_name='';
+                this.$store.state.identity='';
+                this.disabled=false;
+                this.readonly=false;
             },  
         }
     }

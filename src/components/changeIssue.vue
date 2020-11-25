@@ -149,6 +149,10 @@ export default {
             if(this.$store.state.rName==res.data.iChangeperson){
                 this.show_flg=true;
                 this.show_flg2=false;
+                document.getElementById("issue_type").readOnly=false;
+                document.getElementById("issue_version").readOnly=false;
+                document.getElementById("title").readOnly = false;
+                this.readonly =false;
             }else if(this.$store.state.rId+this.$store.state.rName==res.data.iCreator){
                 this.show_flg=false;
                 this.show_flg2=true;
