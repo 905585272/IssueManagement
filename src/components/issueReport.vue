@@ -29,22 +29,22 @@
                 <el-table-column prop="rId" label="用户ID"></el-table-column>
                 <el-table-column prop="rName" label="用户姓名"></el-table-column>
                 <el-table-column prop="rCissue" label="创建Issue数">
-                    <el-button slot-scope="scope" type="text" @click="creator_turnto_issueList(scope.row)">创建数量：
-                        <router-link to="/issueList">
+                    <template slot-scope="scope" type="text" >
+                        <router-link @click.native="creator_turnto_issueList(scope.row)" to="">
                             {{scope.row.rCissue}}
                         </router-link>
-                    </el-button>
+                    </template>
                 </el-table-column>
                 <el-table-column prop="rRissue" label="收到Issue数">
                     <template slot-scope="scope">
-                        <router-link to="/issueList" @click="receive_turnto_issueList(scope.row)">
+                        <router-link @click.native="receive_turnto_issueList(scope.row)" to="">
                             {{scope.row.rRissue}}
                         </router-link>
                     </template>
                 </el-table-column>
                 <el-table-column prop="rMissue" label="修改Issue数">
                     <template slot-scope="scope">
-                        <router-link to="/issueList" @click="change_turnto_issueList(scope.row)">
+                        <router-link @click.native="change_turnto_issueList(scope.row)" to="">
                             {{scope.row.rMissue}}
                         </router-link>
                     </template>
@@ -108,23 +108,23 @@ export default {
             });
     },
     methods:{
-            handleCurrentChange(currentPage){
-                this.$http.get('http://localhost:8080/user/selectallPage/'+currentPage).
-                    then(function(res){
-                        // console.log(res.data.list);
-                        this.tableData.splice(0,this.tableData.length);
-                        res.data.list.forEach(element=>{
-                            // console.log(element);
-                            if (element.rId !== 'admin') {
-                              this.tableData.push(element); 
-                            }
-                        })
-                });
-            },
+        handleCurrentChange(currentPage){
+            this.$http.get('http://localhost:8080/user/selectallPage/'+currentPage).
+                then(function(res){
+                    // console.log(res.data.list);
+                    this.tableData.splice(0,this.tableData.length);
+                    res.data.list.forEach(element=>{
+                        // console.log(element);
+                        if (element.rId !== 'admin') {
+                            this.tableData.push(element); 
+                        }
+                    })
+            });
+        },
         // 序号生成
-            indexMethod(index) {
-                return index = index + 1;
-            },
+        indexMethod(index) {
+            return index = index + 1;
+        },
         //返回功能
         goback(){
                 this.$router.go(-1);
@@ -164,24 +164,20 @@ export default {
         },
         //报表的跳转方法
         creator_turnto_issueList(row){
-                console.log("success!");
-                this.$store.state.temporary_name = row.rName,
-                console.log("temporary_name:"+this.$store.state.temporary_name);
-                this.$store.state.identity='creator'
+            this.$store.state.temporary_name = row.rName,
+            this.$store.state.identity='creator',
+            this.$router.push({path:'/issueList'})
         },
         receive_turnto_issueList(row){
-                this.$store.state.rCissue=row.rCissue;
-                this.$store.state.rRissue=row.rRissue;
-                this.$store.state.rMissue=row.rMissue;
-                this.$store.state.rId = row.rId;
-                this.$store.state.rName = row.rName;
+            this.$store.state.temporary_name = row.rName,
+            this.$store.state.identity='receiver',
+            this.$router.push({path:'/issueList'})
         },
         change_turnto_issueList(row){
-                this.$store.state.rCissue=row.rCissue;
-                this.$store.state.rRissue=row.rRissue;
-                this.$store.state.rMissue=row.rMissue;
-                this.$store.state.rId = row.rId;
-                this.$store.state.rName = row.rName;
+            console.log('change!');
+            this.$store.state.temporary_name = row.rName,
+            this.$store.state.identity='changer',
+            this.$router.push({path:'/issueList'})
         },
         submitForm() {
             this.data_list.splice(0,this.data_list.length);

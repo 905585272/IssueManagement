@@ -7,31 +7,32 @@
             </div>
             <div class="issue_menu col-md-9">
                 <el-form :model="issueform" :rules="rules" ref="issueform" class="row">
-                    <el-form-item label="Issue ID" prop="iNo" class="col-md-3" >
-                        <el-input v-model="issueform.iNo"></el-input>
+                    <el-form-item label="Issue ID" prop="iNo" class="col-md-3">
+                        <el-input v-model="issueform.iNo" readonly="readonly"></el-input>
                     </el-form-item>
                     <el-form-item label="Issue状态" class="col-md-3" >
-                        <el-select v-model="issueform.iIssuestate" placeholder="请选择Issue状态">
+                        <el-select v-model="issueform.iIssuestate" placeholder="请选择Issue状态" disabled='disabled'>
                             <el-option label="待验证" value="待验证" name="iIssuestate"></el-option>
                             <el-option label="关闭" value="关闭" name="iIssuestate"></el-option>
                             <el-option label="待修改" value="待修改" name="iIssuestate"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="创建时间" class="col-md-6">
-                        <el-date-picker 
+                        <el-date-picker
                             v-model="issueform.iCdate"
                             type="daterange"
                             unlink-panels
                             range-separator="-"
                             start-placeholder="开始日期"
-                            end-placeholder="结束日期">
+                            end-placeholder="结束日期"
+                            readonly="readonly">
                         </el-date-picker>
                     </el-form-item>
-                    <el-form-item label="创建人" class="col-md-3" >
-                        <el-input v-model="issueform.iCreator"></el-input>
+                    <el-form-item label="创建人" class="col-md-3">
+                        <el-input v-model="issueform.iCreator" readonly="readonly"></el-input>
                     </el-form-item>
-                    <el-form-item label="修改人" prop="iCreator" class="col-md-3" >
-                        <el-input id="change_person" v-model="issueform.iChangeperson"></el-input>
+                    <el-form-item label="修改人" prop="iCreator" class="col-md-3">
+                        <el-input id="change_person" v-model="issueform.iChangeperson" readonly="readonly"></el-input>
                     </el-form-item>
                     <el-form-item label="修改时间" class="col-md-6">
                         <el-date-picker 
@@ -40,12 +41,13 @@
                             unlink-panels
                             range-separator="-"
                             start-placeholder="开始日期"
-                            end-placeholder="结束日期">
+                            end-placeholder="结束日期" 
+                            readonly='readonly'>
                         </el-date-picker>
                     </el-form-item>
                     <el-form-item class="issue_button">
-                    <el-button type="primary" @click="submitForm()">查询</el-button>
-                    <el-button type="button" @click="reset()">清空</el-button>
+                    <el-button type="primary" @click="submitForm()" disabled='disabled'>查询</el-button>
+                    <el-button type="button" @click="reset()" disabled='disabled'>清空</el-button>
                     <el-button type="button" @click="goback()">返回</el-button>
                     </el-form-item>
                 </el-form>
@@ -144,6 +146,9 @@
                 callback();
             };
             return{
+                //只读状态控制
+                disabled:'',
+                readonly:'',
                 push_index:0,
                 data_list:[],
                 page_num:1,
@@ -183,39 +188,111 @@
             }
         },
         mounted(){
+            this.data_list.splice(0,this.data_list.length);
             //确定进入列表的操作模式
-            console.log("temporary name:"+this.$store.state.temporary_name);
-            console.log("temporary identity:"+this.$store.state.identity);
+            //报表跳转
             if (this.$store.state.temporary_name!==undefined&&this.$store.state.identity!==undefined) {
-                console.log("name:"+this.$store.temporary_name);
-                this.$http.post('http://localhost:8080/issue/selectallSelective',{
-                    iCreator:this.$store.temporary_name,
-                    iChangeperson:'',
-                    iNo:'',
-                    iIssuestate:'',
-                }).then(function (res) {
-                    res.body.forEach(element=>{
-                        this.data_list.push(element)
-                    })
-                }).then(
-                    function () {
-                        if (this.data_list.length>=4) {
-                            for (let index = 0; index < 4; index++) {
-                                this.push_index = index;
-                                const element = this.data_list[index];
-                                this.tableData.push(element);
+                console.log("success!");
+                this.tableData.splice(0,this.tableData.length);
+                this.disabled=true;
+                this.readonly=true;
+                console.log("user:"+this.$store.state.temporary_name);
+                if (this.$store.state.identity=='creator') {
+                    console.log("creator success!");
+                    this.$http.post('http://localhost:8080/issue/selectallSelective',{
+                        iCreator:this.$store.state.temporary_name,
+                        iChangeperson:'',
+                        iNo:'',
+                        iIssuestate:'',
+                    }).then(function (res) {
+                        console.log("list add");
+                        res.body.forEach(element=>{
+                            this.data_list.push(element)
+                        }),
+                        this.total_data_num=this.data_list.length
+                    }).then(
+                        function () {
+                            if (this.data_list.length>=4) {
+                                for (let index = 0; index < 4; index++) {
+                                    this.push_index = index;
+                                    const element = this.data_list[index];
+                                    this.tableData.push(element);
+                                }
+                            }
+                            else{
+                                for (let index = 0; index < this.data_list.length; index++) {
+                                    this.push_index = index;
+                                    const element = this.data_list[index];
+                                    this.tableData.push(element);
+                                }
                             }
                         }
-                        else{
-                            for (let index = 0; index < this.data_list.length; index++) {
-                                this.push_index = index;
-                                const element = this.data_list[index];
-                                this.tableData.push(element);
+                    )
+                }else if (this.$store.state.identity=='receiver') {
+                    console.log("receive success");
+                    this.$http.post('http://localhost:8080/issue/selectallSelective',{
+                        iCreator:'',
+                        iChangeperson:this.$store.state.temporary_name,
+                        iNo:'',
+                        iIssuestate:'',
+                    }).then(function (res) {
+                        res.body.forEach(element=>{
+                            this.data_list.push(element)
+                        }),
+                        this.total_data_num=this.data_list.length
+                    }).then(
+                        function () {
+                            if (this.data_list.length>=4) {
+                                for (let index = 0; index < 4; index++) {
+                                    this.push_index = index;
+                                    const element = this.data_list[index];
+                                    this.tableData.push(element);
+                                }
+                            }
+                            else{
+                                for (let index = 0; index < this.data_list.length; index++) {
+                                    this.push_index = index;
+                                    const element = this.data_list[index];
+                                    this.tableData.push(element);
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }else if (this.$store.state.identity=='changer') {
+                    console.log("change success!");
+                    this.$http.post('http://localhost:8080/issue/selectallSelective',{
+                        iCreator:'',
+                        iChangeperson:this.$store.state.temporary_name,
+                        iNo:'',
+                        iIssuestate:'待验证',
+                    }).then(function (res) {
+                        res.body.forEach(element=>{
+                            this.data_list.push(element)
+                        }),
+                        this.total_data_num=this.data_list.length
+                    }).then(
+                        function () {
+                            if (this.data_list.length>=4) {
+                                for (let index = 0; index < 4; index++) {
+                                    this.push_index = index;
+                                    const element = this.data_list[index];
+                                    this.tableData.push(element);
+                                }
+                            }
+                            else{
+                                for (let index = 0; index < this.data_list.length; index++) {
+                                    this.push_index = index;
+                                    const element = this.data_list[index];
+                                    this.tableData.push(element);
+                                }
+                            }
+                        }
+                    )
+                }
+                
             }else{
+                this.readonly=false;
+                this.disabled=false;
                 if(this.$store.state.rUserid=='经理'){
                     this.rUserid_flg=false;
                     this.$http.get('http://localhost:8080/issue/selectall').
@@ -524,6 +601,8 @@
             },
             goback(){
                 this.$router.go(-1);
+                // this.$store.state.temporary_name='',
+                // this.$store.state.identity=''
             },  
         }
     }
