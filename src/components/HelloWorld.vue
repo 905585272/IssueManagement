@@ -76,41 +76,41 @@
             </el-button>
           </div>
           <div class="quitbtn col-md-6" v-show="quitable">
-          <el-button type="info" class="white_text" size="small" @click="quit">
+          <el-button type="primary" class="white_text" size="small" @click="quit" round>
               <h5><i class="el-icon-right white_text"></i>退出当前账号</h5>
           </el-button>
           </div>
           <div class="changePage col-md-6" v-if="changeable">
             <router-link to="/changepage" class="white_text">
-              <el-button type="info" class="white_text" size="small">
+              <el-button type="primary" class="white_text" size="small" round>
                 <h5><i class="el-icon-s-tools white_text"></i>修改个人信息</h5>
               </el-button>
             </router-link>
           </div>
           <div class="createIssue col-md-6" v-if="createissue">
             <router-link to="/createissue" class="white_text">
-              <el-button type="info" class="white_text" size="small">
+              <el-button type="primary" class="white_text" size="small" round>
                 <h5><i class="el-icon-circle-plus white_text"></i>创建新Issue</h5>
               </el-button>
             </router-link>
           </div>
           <div class="issueList col-md-6" v-if="issuelist">
             <router-link to="/issueList" class="white_text">
-              <el-button type="info" class="white_text" size="small">
+              <el-button type="primary" class="white_text" size="small" round>
                 <h5><i class="el-icon-star-on white_text"></i>Issue列表</h5>
               </el-button>
             </router-link>
           </div>
           <div class="issueReport col-md-6" v-if="issuereport">
             <router-link to="/issueReport" class="white_text">
-              <el-button type="info" class="white_text" size="small">
+              <el-button type="primary" class="white_text" size="small" round>
                 <h5><i class="el-icon-star-on white_text"></i>Issue报表</h5>
               </el-button>
             </router-link>
           </div>
           <div class="userManage col-md-6" v-if="admin_flg">
-            <router-link to="/userManage" class="white_text" style="color:#F56C6C">
-              <el-button type="info" class="white_text" size="small">
+            <router-link to="/userManage" class="white_text">
+              <el-button type="danger" class="white_text" size="small" round>
                 <h5><i class="el-icon-loading"></i>账号管理</h5>
               </el-button>
             </router-link>
@@ -268,7 +268,6 @@ export default {
           rPwd: [
               { required: true,message: '请输入密码',trigger: 'blur' },
               { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
-              { validator: validatePass1, trigger: 'blur' }
           ],
           rPwd2: [
               { required: true,message: '请输入密码',trigger: 'blur' },

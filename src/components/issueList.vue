@@ -121,7 +121,7 @@
                                 type="primary"
                                 icon="el-icon-edit"
                                 @click="turnto_changeIssue(scope.row)"
-                                v-if="rUserid_flg">
+                                v-if="rUserid_flg&&scope.row.iIssuestate !=='关闭'">
                                 </el-button>
                             </el-tooltip>
                         </router-link>
@@ -644,11 +644,12 @@
     .issue_table{
         margin: 20px auto;
         border-radius: 15px;
-    }.img_body{
+    }
+    .img_body{
     position: relative;
-    background-image: url(https://img.ivsky.com/img/tupian/pic/202005/03/hupo_daoying-001.jpg);
+    background-image: url(https://img.ivsky.com/img/tupian/pic/202005/03/hupo_daoying-002.jpg);
     background-size:cover;
     box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
     height: 937px;
-  }
+    }
 </style>
