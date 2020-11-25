@@ -29,22 +29,22 @@
                 <el-table-column prop="rId" label="用户ID"></el-table-column>
                 <el-table-column prop="rName" label="用户姓名"></el-table-column>
                 <el-table-column prop="rCissue" label="创建Issue数">
-                    <template slot-scope="scope">
-                        <router-link to="/issueList" @click="turnto_issueList(scope.row)">
+                    <el-button slot-scope="scope" type="text" @click="creator_turnto_issueList(scope.row)">创建数量：
+                        <router-link to="/issueList">
                             {{scope.row.rCissue}}
                         </router-link>
-                    </template>
+                    </el-button>
                 </el-table-column>
                 <el-table-column prop="rRissue" label="收到Issue数">
                     <template slot-scope="scope">
-                        <router-link to="/issueList" @click="turnto_issueList(scope.row)">
+                        <router-link to="/issueList" @click="receive_turnto_issueList(scope.row)">
                             {{scope.row.rRissue}}
                         </router-link>
                     </template>
                 </el-table-column>
                 <el-table-column prop="rMissue" label="修改Issue数">
                     <template slot-scope="scope">
-                        <router-link to="/issueList" @click="turnto_issueList(scope.row)">
+                        <router-link to="/issueList" @click="change_turnto_issueList(scope.row)">
                             {{scope.row.rMissue}}
                         </router-link>
                     </template>
@@ -73,6 +73,8 @@ export default {
                 callback();
             };
         return{
+            push_index:0,
+            data_list:[],
             total_data_num:1,
             issueform:{
                 rId:'',
@@ -129,33 +131,52 @@ export default {
         },
         //清空设置
         reset(){
+                this.data_list.splice(0,this.data_list.length);
                 this.tableData.splice(0,this.tableData.length);
                 this.issueform.rId='';
                 this.issueform.rName='';
                 this.$http.get('http://localhost:8080/user/selectall').
                 then(function(res){
-                    this.msg = res.body;
-                    console.log(this.msg);
-                    this.msg.forEach(item=>{
-                        if(item.rUserid != 'admin'){
-                            this.tableData.push(item);
+                    this.total_data_num = res.data.length;
+                    for (let index = 0; index < 4; index++) {
+                        const element = res.body[index];
+                        console.log("element:"+element.rName);
+                        this.tableData.push(element);
+                    }
+                    res.body.forEach(element=>{
+                        if(element.rUserid != 'admin'){
+                            this.data_list.push(element);
                         }
-                    });
+                    })
                 }).catch(function(error){
                     console.log(error);
-                })  
+                });
         },
         tableRowClassName({row}) {
                 if(row.rMissue === 0 || row.rRissue === 0){
                     return row.iSuccess = 0 + '%';
                 }else{
-                    console.log('row.rMissue:' + row.rMissue);
-                    console.log('row.rRissue:' + row.rRissue);
-                    console.log('row.iSuccess:' + (row.rMissue / row.rRissue));
+                    // console.log('row.rMissue:' + row.rMissue);
+                    // console.log('row.rRissue:' + row.rRissue);
+                    // console.log('row.iSuccess:' + (row.rMissue / row.rRissue));
                     return row.iSuccess = ((row.rMissue / row.rRissue)*100).toFixed(0) + '%';
                 }
         },
-        turnto_issueList(row){
+        //报表的跳转方法
+        creator_turnto_issueList(row){
+                console.log("success!");
+                this.$store.state.temporary_name = row.rName,
+                console.log("temporary_name:"+this.$store.state.temporary_name);
+                this.$store.state.identity='creator'
+        },
+        receive_turnto_issueList(row){
+                this.$store.state.rCissue=row.rCissue;
+                this.$store.state.rRissue=row.rRissue;
+                this.$store.state.rMissue=row.rMissue;
+                this.$store.state.rId = row.rId;
+                this.$store.state.rName = row.rName;
+        },
+        change_turnto_issueList(row){
                 this.$store.state.rCissue=row.rCissue;
                 this.$store.state.rRissue=row.rRissue;
                 this.$store.state.rMissue=row.rMissue;
@@ -163,16 +184,38 @@ export default {
                 this.$store.state.rName = row.rName;
         },
         submitForm() {
-            this.$http.post('http://localhost:8080/user/selectAllSelectivepage/1',{
-            rId:this.issueform.rId,
-            rName:this.issueform.rName,
-            }).then(function (userdata) {
-                this.tableData.splice(0,this.tableData.length);
-                console.log(userdata.body.list);
-                userdata.body.list.forEach(element=>{
-                    this.tableData.push(element);
+            this.data_list.splice(0,this.data_list.length);
+                this.page_num=1;
+                this.$http.post('http://localhost:8080/user/selectallSelective',{
+                rId:this.issueform.rId,
+                rName:this.issueform.rName,
+                }).then(function (userdata) {
+                    this.tableData.splice(0,this.tableData.length);
+                    console.log(userdata.body);
+                    userdata.body.forEach(element=>{
+                    //  this.tableData.push(element);
+                        console.log("element:"+element.rName);
+                        this.data_list.push(element);
+                    })
+                }).then(function () {
+                    console.log("data list:"+this.data_list);
+                    if (this.data_list.length>=4) {
+                        for (let index = 0; index < 4; index++) {
+                            this.push_index = index;
+                            const element = this.data_list[index];
+                            
+                            this.tableData.push(element);
+                        }
+                    }
+                    else{
+                        for (let index = 0; index < this.data_list.length; index++) {
+                            this.push_index = index;
+                            const element = this.data_list[index];
+                            this.tableData.push(element);
+                        }
+                    }   
+                    this.total_data_num=this.data_list.length;
                 })
-            })
         },
     }
 }

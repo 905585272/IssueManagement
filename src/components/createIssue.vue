@@ -35,7 +35,7 @@
                     <el-input v-model="issueform.iVesion"></el-input>
                 </el-form-item>
                 <el-form-item label="计划修改时间" class="col-md-3" prop="iPlantime">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="issueform.iPlantime" :picker-options="pickerOptions0"></el-date-picker>
+                    <el-date-picker placeholder="选择日期" v-model="issueform.iPlantime" :picker-options="pickerOptions0"></el-date-picker>
                 </el-form-item>
 
                 <el-form-item label="重现步骤" class="col-md-12" prop="iReappear">

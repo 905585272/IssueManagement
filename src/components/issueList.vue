@@ -183,52 +183,86 @@
             }
         },
         mounted(){
-            if(this.$store.state.rUserid=='经理'){
-                this.rUserid_flg=false;
-                this.$http.get('http://localhost:8080/issue/selectall').
-                then(function(res){
-                    this.msg = res.body;
-                    for (let index = 0; index < 4; index++) {
-                        const element = this.msg[index];
-                        this.tableData.push(element);
-                    }
-                    this.msg.forEach(item=>{
-                        this.data_list.push(item);
+            //确定进入列表的操作模式
+            console.log("temporary name:"+this.$store.state.temporary_name);
+            console.log("temporary identity:"+this.$store.state.identity);
+            if (this.$store.state.temporary_name!==undefined&&this.$store.state.identity!==undefined) {
+                console.log("name:"+this.$store.temporary_name);
+                this.$http.post('http://localhost:8080/issue/selectallSelective',{
+                    iCreator:this.$store.temporary_name,
+                    iChangeperson:'',
+                    iNo:'',
+                    iIssuestate:'',
+                }).then(function (res) {
+                    res.body.forEach(element=>{
+                        this.data_list.push(element)
                     })
-                    this.total_data_num = res.body.length;
-                    console.log("!!length:"+this.data_list.length);
-                }).catch(function(error){
-                    console.log(error);
-                })
-            }else if (this.$store.state.rUserid=='普通用户') {
-                this.rUserid_flg=true;
-                this.$http.get('http://localhost:8080/issue/selectall').
-                then(function(res){
-                    // console.log(this.msg.length);
-                    this.msg = res.body;
-                    var num = 0;
-                    for (let index = 0; index < this.msg.length; index++) {
-                        const element = this.msg[index];
-                        if (element.iChangeperson==this.$store.state.rName || element.iCreator==(this.$store.state.rId+this.$store.state.rName)){
+                }).then(
+                    function () {
+                        if (this.data_list.length>=4) {
+                            for (let index = 0; index < 4; index++) {
+                                this.push_index = index;
+                                const element = this.data_list[index];
+                                this.tableData.push(element);
+                            }
+                        }
+                        else{
+                            for (let index = 0; index < this.data_list.length; index++) {
+                                this.push_index = index;
+                                const element = this.data_list[index];
+                                this.tableData.push(element);
+                            }
+                        }
+                    }
+                )
+            }else{
+                if(this.$store.state.rUserid=='经理'){
+                    this.rUserid_flg=false;
+                    this.$http.get('http://localhost:8080/issue/selectall').
+                    then(function(res){
+                        this.msg = res.body;
+                        for (let index = 0; index < 4; index++) {
+                            const element = this.msg[index];
                             this.tableData.push(element);
-                            num++;
-                        }if (num >= 4) {
-                            break;
                         }
-                    };
-                    var num2=0;
-                    for (let index = 0; index < this.msg.length; index++) {
-                        const element = this.msg[index];
-                        if (element.iChangeperson==this.$store.state.rName || element.iCreator==(this.$store.state.rId+this.$store.state.rName)){
-                            num2++;
-                            this.data_list.push(element);
-                        }
-                    };
-                    console.log("!!length:"+this.data_list.length);
-                    this.total_data_num = num2;
-                }).catch(function(error){
-                    console.log(error);
-                })
+                        this.msg.forEach(item=>{
+                            this.data_list.push(item);
+                        })
+                        this.total_data_num = res.body.length;
+                        console.log("!!length:"+this.data_list.length);
+                    }).catch(function(error){
+                        console.log(error);
+                    })
+                }else if (this.$store.state.rUserid=='普通用户') {
+                    this.rUserid_flg=true;
+                    this.$http.get('http://localhost:8080/issue/selectall').
+                    then(function(res){
+                        // console.log(this.msg.length);
+                        this.msg = res.body;
+                        var num = 0;
+                        for (let index = 0; index < this.msg.length; index++) {
+                            const element = this.msg[index];
+                            if (element.iChangeperson==this.$store.state.rName || element.iCreator==(this.$store.state.rId+this.$store.state.rName)){
+                                this.tableData.push(element);
+                                num++;
+                            }if (num >= 4) {
+                                break;
+                            }
+                        };
+                        var num2=0;
+                        for (let index = 0; index < this.msg.length; index++) {
+                            const element = this.msg[index];
+                            if (element.iChangeperson==this.$store.state.rName || element.iCreator==(this.$store.state.rId+this.$store.state.rName)){
+                                num2++;
+                                this.data_list.push(element);
+                            }
+                        };
+                        console.log("!!length:"+this.data_list.length);
+                        this.total_data_num = num2;
+                    }).catch(function(error){
+                        console.log(error);
+                    })
+                }
             }
         },
         methods: {

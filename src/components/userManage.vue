@@ -135,16 +135,16 @@
             this.$http.get('http://localhost:8080/user/selectall').
             then(function(res){
                 this.total_data_num = res.data.length;
-                for (let index = 0; index < 4; index++) {
-                    const element = res.body[index];
-                    this.tableData.push(element);
-                }
                 res.body.forEach(element=>{
-                    if(element.rUserid != 'admin'){
+                    if(element.rUserid !== 'admin'){
                         this.data_list.push(element);
                     }
-                this.total_data_num = res.body.length;
                 })
+                for (let index = 0; index < 4; index++) {
+                    const element = this.data_list[index];
+                    this.tableData.push(element);
+                }  
+                this.total_data_num = res.body.length;
             }).catch(function(error){
                 console.log(error);
             });
@@ -225,15 +225,15 @@
                 this.$http.get('http://localhost:8080/user/selectall').
                 then(function(res){
                     this.total_data_num = res.data.length;
-                    for (let index = 0; index < 4; index++) {
-                        const element = res.body[index];
-                        this.tableData.push(element);
-                    }
                     res.body.forEach(element=>{
                         if(element.rUserid != 'admin'){
                             this.data_list.push(element);
                         }
                     })
+                    for (let index = 0; index < 4; index++) {
+                        const element = this.data_list[index];
+                        this.tableData.push(element);
+                    }
                 }).catch(function(error){
                     console.log(error);
                 });

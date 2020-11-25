@@ -42,6 +42,9 @@ const store = new Vuex.Store({
         iChangeperson: '',
         iHandlemethod: '',
         iIssuestate: '',
+        //临时用户
+        temporary_name: '',
+        identity: '',
     }
 })
 
