@@ -1,11 +1,11 @@
 <template>
-    <div class="container">
-        <div>
+    <div class="img_body col-md-12">
+        <div class="container col-md-10">
             <div class="titlea col-md-12">
                 <h5 class="text-left"><b>Issue查询</b></h5>
                 <el-divider></el-divider>
             </div>
-            <div class="issue_menu col-md-9">
+            <div class="issue_menu col-md-6">
                 <el-form :model="issueform" :rules="rules" ref="issueform" class="row">
                     <el-form-item label="Issue ID" prop="iNo" class="col-md-3">
                         <el-input v-model="issueform.iNo" :readonly='readonly'></el-input>
@@ -52,82 +52,87 @@
                     </el-form-item>
                 </el-form>
             </div>
-        </div>
-        <div class="col-md-12">
-            <div class="titlea col-md-12">
-                <h5 class="text-left"><b>Issue列表</b></h5>
-                <el-divider></el-divider>
+            <div class="col-md-12">
+                <div class="titlea col-md-12">
+                    <h5 class="text-left"><b>Issue列表</b></h5>
+                    <el-divider></el-divider>
+                </div>
+                <el-table class="issue_table"
+                    :data="tableData"
+                    border
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    :default-sort="{prop: 'date', order: 'descending'}"
+                    @row-click="turnto_changeIssue">
+                    <!-- border -->
+                    <!-- stripe -->
+                    <el-table-column
+                    type="index"
+                    label="序号"
+                    :index="indexMethod">
+                    </el-table-column>
+                    <el-table-column
+                    prop="iNo"
+                    label="IssueID">
+                    </el-table-column>
+                    <el-table-column
+                    prop="iTitle"
+                    label="Issue标题">
+                    </el-table-column>
+                    <el-table-column
+                    prop="iCreator"
+                    label="创建人">
+                    </el-table-column>
+                    <el-table-column
+                    prop="iCdate"
+                    label="创建时间">
+                    </el-table-column>
+                    <el-table-column
+                    prop="iChangeperson"
+                    label="修改人">
+                    </el-table-column>
+                    <el-table-column
+                    prop="iIssuestate"
+                    label="Issue状态">
+                    </el-table-column>
+                    <el-table-column
+                    prop="iPlantime"
+                    label="计划完成时间">
+                    </el-table-column>
+                    <el-table-column
+                    prop="iFinishtime"
+                    label="实际完成时间">
+                    </el-table-column>
+                    <el-table-column
+                    prop="action"
+                    label="操作">
+                    <template slot-scope="scope">
+                        <router-link to="/viewIssue">
+                            <el-tooltip class="item" effect="dark" content="查看Issue详细内容" placement="top">
+                                <el-button
+                                icon="el-icon-view"
+                                @click="turnto_changeIssue(scope.row)">
+                                </el-button>
+                            </el-tooltip>
+                        </router-link>
+                        <router-link to="/changeIssue">
+                            <el-tooltip class="item" effect="dark" content="修改Issue" placement="top">
+                                <el-button
+                                type="primary"
+                                icon="el-icon-edit"
+                                @click="turnto_changeIssue(scope.row)"
+                                v-if="rUserid_flg">
+                                </el-button>
+                            </el-tooltip>
+                        </router-link>
+                    </template>
+                    </el-table-column>
+                </el-table>
+                <el-pagination
+                background :page-size="4" :pager-count="11" layout="prev, pager, next" :total="total_data_num"
+                @current-change="handleCurrentChange" :current-page.sync="page_num">
+                </el-pagination>
             </div>
-            <el-table class="col-md-12 issue_table"
-                :data="tableData"
-                style="width: 100%"
-                :row-class-name="tableRowClassName"
-                :default-sort="{prop: 'date', order: 'descending'}"
-                @row-click="turnto_changeIssue">
-                <!-- border -->
-                <!-- stripe -->
-                <el-table-column
-                type="index"
-                label="序号"
-                :index="indexMethod">
-                </el-table-column>
-                <el-table-column
-                prop="iNo"
-                label="IssueID">
-                </el-table-column>
-                <el-table-column
-                prop="iTitle"
-                label="Issue标题">
-                </el-table-column>
-                <el-table-column
-                prop="iCreator"
-                label="创建人">
-                </el-table-column>
-                <el-table-column
-                prop="iCdate"
-                label="创建时间">
-                </el-table-column>
-                <el-table-column
-                prop="iChangeperson"
-                label="修改人">
-                </el-table-column>
-                <el-table-column
-                prop="iIssuestate"
-                label="Issue状态">
-                </el-table-column>
-                <el-table-column
-                prop="iPlantime"
-                label="计划完成时间">
-                </el-table-column>
-                <el-table-column
-                prop="iFinishtime"
-                label="实际完成时间">
-                </el-table-column>
-                <el-table-column
-                prop="action"
-                label="操作">
-                <template slot-scope="scope">
-                    <router-link to="/viewIssue">
-                        <el-button
-                        icon="el-icon-view"
-                        @click="turnto_changeIssue(scope.row)">
-                        </el-button>
-                    </router-link>
-                    <router-link to="/changeIssue">
-                        <el-button
-                        type="primary"
-                        icon="el-icon-edit"
-                        @click="turnto_changeIssue(scope.row)"
-                        v-if="rUserid_flg">
-                        </el-button>
-                    </router-link>
-                </template>
-                </el-table-column>
-            </el-table>
-            <el-pagination
-            background :page-size="4" :pager-count="11" layout="prev, pager, next" :total="total_data_num"
-            @current-change="handleCurrentChange" :current-page.sync="page_num">
-            </el-pagination>
         </div>
     </div>
 </template>
@@ -613,11 +618,13 @@
     }
 </script>
 
-<style>
+<style scoped>
     .issue_menu{
         /* border-radius: 2px; */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+        box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
         margin: 20px auto;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.3);
     }
     .issue_button{
         margin: 20px auto;
@@ -636,5 +643,12 @@
     }
     .issue_table{
         margin: 20px auto;
-    }
+        border-radius: 15px;
+    }.img_body{
+    position: relative;
+    background-image: url(https://img.ivsky.com/img/tupian/pic/202005/03/hupo_daoying-001.jpg);
+    background-size:cover;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
+    height: 937px;
+  }
 </style>

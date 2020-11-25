@@ -18,6 +18,7 @@ const store = new Vuex.Store({
         iconableTwo: false,
         iconableThree: false,
         quitable: false,
+        helloTitle: true,
         // 全局用户数据
         rId: '',
         rName: '',

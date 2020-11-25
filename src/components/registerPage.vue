@@ -168,6 +168,7 @@
                                         this.$store.state.issuereport = true,
                                         this.$store.state.changeable = true,
                                         this.$store.state.iconable = true,
+                                        this.$store.state.helloTitle = false,
                                         // 全局用户数据同步
                                         this.$store.state.rId = this.ruleForm.rId,
                                         this.$store.state.rName = this.ruleForm.rName,

@@ -2,8 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import vueResource from 'vue-resource';
-import enterPage from "../components/enterPage.vue";
-import registerPage from "../components/registerPage.vue";
+// import enterPage from "../components/enterPage.vue";
+// import registerPage from "../components/registerPage.vue";
 import changePage from '../components/changePage.vue';
 import createIssue from '../components/createIssue.vue';
 import issueReport from '../components/issueReport.vue';
@@ -23,16 +23,16 @@ const routes = [{
         name: "Home",
         component: Home
     },
-    {
-        path: '/enterpage',
-        name: 'enterPage',
-        component: enterPage
-    },
-    {
-        path: '/registerpage',
-        name: 'registerPage',
-        component: registerPage
-    },
+    // {
+    //     path: '/enterpage',
+    //     name: 'enterPage',
+    //     component: enterPage
+    // },
+    // {
+    //     path: '/registerpage',
+    //     name: 'registerPage',
+    //     component: registerPage
+    // },
     {
         path: '/changepage',
         name: 'changePage',
