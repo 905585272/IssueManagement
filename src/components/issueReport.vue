@@ -55,7 +55,7 @@
             </el-table>
             <el-pagination
             background :page-size="4" :pager-count="11" layout="prev, pager, next" :total="total_data_num"
-            @current-change="handleCurrentChange">
+            @current-change="handleCurrentChange" :current-page.sync="page_num">
             </el-pagination>
         </div>
     </div>
@@ -98,12 +98,15 @@ export default {
     mounted() {
             this.$http.get('http://localhost:8080/user/selectall').
             then(function(res){
-                this.total_data_num = res.data.length;
-                for (let index = 0; index < 4; index++) {
-                    const element = res.body[index];
+                res.data.forEach(element=>{
                     if(element.rUserid != 'Admin'){
-                        this.tableData.push(element);
+                       this.data_list.push(element);
                     }
+                })
+                this.total_data_num = this.data_list.length;
+                for (let index = 0; index < 4; index++) {
+                    const element = this.data_list[index];
+                    this.tableData.push(element);
                 }
             }).catch(function(error){
                 console.log(error);
@@ -111,17 +114,18 @@ export default {
     },
     methods:{
         handleCurrentChange(currentPage){
-            this.$http.get('http://localhost:8080/user/selectallPage/'+currentPage).
-                then(function(res){
-                    // console.log(res.data.list);
-                    this.tableData.splice(0,this.tableData.length);
-                    res.data.list.forEach(element=>{
-                        // console.log(element);
-                        if (element.rUserid !== 'Admin') {
-                            this.tableData.push(element); 
-                        }
-                    })
-            });
+            this.push_index=(currentPage-1)*4;
+            this.tableData.splice(0,this.tableData.length);
+            for (let index = 0; index < 4; index++) {
+                // console.log("page:"+index);
+                if (this.push_index<this.data_list.length) {
+                    const element = this.data_list[this.push_index++];
+                    // console.log("page:"+element);
+                    this.tableData.push(element);
+                }else{
+                    break;
+                }
+            }
         },
         // 序号生成
         indexMethod(index) {
@@ -133,26 +137,27 @@ export default {
         },
         //清空设置
         reset(){
-                this.data_list.splice(0,this.data_list.length);
-                this.tableData.splice(0,this.tableData.length);
-                this.issueform.rId='';
-                this.issueform.rName='';
-                this.$http.get('http://localhost:8080/user/selectall').
-                then(function(res){
-                    this.total_data_num = res.data.length;
-                    for (let index = 0; index < 4; index++) {
-                        const element = res.body[index];
-                        console.log("element:"+element.rName);
-                        this.tableData.push(element);
+            this.page_num=1;
+            this.data_list.splice(0,this.data_list.length);
+            this.tableData.splice(0,this.tableData.length);
+            this.issueform.rId='';
+            this.issueform.rName='';
+            this.$http.get('http://localhost:8080/user/selectall').
+            then(function(res){
+                this.total_data_num = res.data.length;
+                for (let index = 0; index < 4; index++) {
+                    const element = res.body[index];
+                    console.log("element:"+element.rName);
+                    this.tableData.push(element);
+                }
+                res.body.forEach(element=>{
+                    if(element.rUserid != 'Admin'){
+                        this.data_list.push(element);
                     }
-                    res.body.forEach(element=>{
-                        if(element.rUserid != 'Admin'){
-                            this.data_list.push(element);
-                        }
-                    })
-                }).catch(function(error){
-                    console.log(error);
-                });
+                })
+            }).catch(function(error){
+                console.log(error);
+            });
         },
         tableRowClassName({row}) {
                 if(row.rMissue === 0 || row.rRissue === 0){
@@ -183,37 +188,37 @@ export default {
         },
         submitForm() {
             this.data_list.splice(0,this.data_list.length);
-                this.page_num=1;
-                this.$http.post('http://localhost:8080/user/selectallSelective',{
-                rId:this.issueform.rId,
-                rName:this.issueform.rName,
-                }).then(function (userdata) {
-                    this.tableData.splice(0,this.tableData.length);
-                    console.log(userdata.body);
-                    userdata.body.forEach(element=>{
-                    //  this.tableData.push(element);
-                        console.log("element:"+element.rName);
-                        this.data_list.push(element);
-                    })
-                }).then(function () {
-                    console.log("data list:"+this.data_list);
-                    if (this.data_list.length>=4) {
-                        for (let index = 0; index < 4; index++) {
-                            this.push_index = index;
-                            const element = this.data_list[index];
-                            
-                            this.tableData.push(element);
-                        }
-                    }
-                    else{
-                        for (let index = 0; index < this.data_list.length; index++) {
-                            this.push_index = index;
-                            const element = this.data_list[index];
-                            this.tableData.push(element);
-                        }
-                    }   
-                    this.total_data_num=this.data_list.length;
+            this.page_num=1;
+            this.$http.post('http://localhost:8080/user/selectallSelective',{
+            rId:this.issueform.rId,
+            rName:this.issueform.rName,
+            }).then(function (userdata) {
+                this.tableData.splice(0,this.tableData.length);
+                console.log(userdata.body);
+                userdata.body.forEach(element=>{
+                //  this.tableData.push(element);
+                    console.log("element:"+element.rName);
+                    this.data_list.push(element);
                 })
+            }).then(function () {
+                console.log("data list:"+this.data_list);
+                if (this.data_list.length>=4) {
+                    for (let index = 0; index < 4; index++) {
+                        this.push_index = index;
+                        const element = this.data_list[index];
+                        
+                        this.tableData.push(element);
+                    }
+                }
+                else{
+                    for (let index = 0; index < this.data_list.length; index++) {
+                        this.push_index = index;
+                        const element = this.data_list[index];
+                        this.tableData.push(element);
+                    }
+                }   
+                this.total_data_num=this.data_list.length;
+            })
         },
     }
 }
@@ -222,7 +227,7 @@ export default {
 <style scoped>
     #big_body{
         height: 100vh;
-        background-image: url(~@/assets/luori-006.jpg);
+        background-image: url(https://img.ivsky.com/img/tupian/pic/202004/20/luori-006.jpg);
         background-size:cover;
         -o-background-size: cover;
         background-repeat: no-repeat;

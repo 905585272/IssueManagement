@@ -1,11 +1,11 @@
 <template>
-<div>
+<div class="img_body">
     <div class="container">
         <div class="col-md-12 page_title">
             <el-form class="form-horizontal row" role="form" :model="issueform" ref="issueform">
                 <label for="title" class="col-md-2 control-label"><h4>Issue题目</h4></label>
                 <el-form-item class="col-md-8" prop="iTitle" >
-                    <el-input  v-model="issueform.iTitle" id="title" placeholder="请输入题目"></el-input>
+                    <el-input  v-model="issueform.iTitle" id="title" placeholder="请输入题目" ReadOnly></el-input>
                 </el-form-item>
             </el-form>
         </div>
@@ -41,8 +41,8 @@
                     <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" ReadOnly :rows="10"></el-input>
                 </el-form-item>
 
-                <el-form-item label="解决方案" class="col-md-12" v-if="show_flg">
-                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" ReadOnly :rows="10"></el-input>
+                <el-form-item label="解决方案" class="col-md-12">
+                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" ReadOnly :rows="8"></el-input>
                 </el-form-item>
 
                 <el-form-item label="指派修改人" class="col-md-4">
@@ -59,13 +59,22 @@
 
 <style scoped>
     .page_title{
-        margin:5% auto;
+        margin-bottom: 20px;
     }
     .el-textarea__inner{
         height:100px;
     }
     .body{
         margin:20px auto;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.3);
+    }
+    .img_body{
+    position: relative;
+    background-image: url(https://img.ivsky.com/img/tupian/pic/202005/03/hupo_daoying-002.jpg);
+    background-size:cover;
+    height: 100vh;
     }
 </style>
 
@@ -78,7 +87,6 @@ export default {
                 return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的 
             }
         },
-        show_flg:'',
         rNname:'',
         issueform: {
             iCreator:'',
@@ -113,11 +121,6 @@ export default {
         this.issueform.iHandlemethod=this.$store.state.iHandlemethod;
         this.issueform.iIssuestate=this.$store.state.iIssuestate;
         this.issueform.iPlantime=this.$store.state.iPlantime;
-        if(this.$store.state.rName==this.issueform.iChangeperson){
-                this.show_flg=true;
-            }else if(this.$store.state.rName==this.issueform.iCreator){
-                this.show_flg=false;
-            }
     },
     methods: {
         getDate(strDate){

@@ -13,7 +13,7 @@
                     <el-form-item label="Issue状态" class="col-md-3" >
                         <el-select v-model="issueform.iIssuestate" placeholder="请选择Issue状态" :disabled='disabled'>
                             <el-option label="待验证" value="待验证" name="iIssuestate"></el-option>
-                            <el-option label="关闭" value="关闭" name="iIssuestate"></el-option>
+                            <el-option label="已关闭" value="已关闭" name="iIssuestate"></el-option>
                             <el-option label="待修改" value="待修改" name="iIssuestate"></el-option>
                         </el-select>
                     </el-form-item>
@@ -25,7 +25,8 @@
                             range-separator="-"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"
-                            :readonly='readonly'>
+                            :readonly='readonly'
+                            class="col-md-10">
                         </el-date-picker>
                     </el-form-item>
                     <el-form-item label="创建人" prop="iCreator" class="col-md-3" >
@@ -42,7 +43,8 @@
                             range-separator="-"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期" 
-                            :readonly='readonly'>
+                            :readonly='readonly'
+                            class="col-md-10">
                         </el-date-picker>
                     </el-form-item>
                     <el-form-item class="issue_button">
@@ -121,7 +123,7 @@
                                 type="primary"
                                 icon="el-icon-edit"
                                 @click="turnto_changeIssue(scope.row)"
-                                v-if="rUserid_flg&&scope.row.iIssuestate !=='关闭'">
+                                v-if="rUserid_flg">
                                 </el-button>
                             </el-tooltip>
                         </router-link>
@@ -183,7 +185,6 @@
                     ], 
                     iCreator: [
                         { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
-                        { validator: checkChinese, trigger: 'blur' }
                     ],
                     iChangeperson: [
                         { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
@@ -271,7 +272,7 @@
                         iCreator:'',
                         iChangeperson:this.$store.state.temporary_name,
                         iNo:'',
-                        iIssuestate:'待验证',
+                        iIssuestate:'已关闭',
                     }).then(function (res) {
                         res.body.forEach(element=>{
                             this.data_list.push(element)
@@ -305,15 +306,21 @@
                     this.$http.get('http://localhost:8080/issue/selectall').
                     then(function(res){
                         this.msg = res.body;
-                        for (let index = 0; index < 4; index++) {
-                            const element = this.msg[index];
-                            this.tableData.push(element);
-                        }
                         this.msg.forEach(item=>{
                             this.data_list.push(item);
                         })
+                        if (this.data_list.length<4) {
+                            for (let index = 0; index < this.data_list.length; index++) {
+                                const element = this.data_list[index];
+                                this.tableData.push(element);
+                            }
+                        }else{
+                            for (let index = 0; index < 4; index++) {
+                                const element = this.data_list[index];
+                                this.tableData.push(element);
+                            }
+                        }
                         this.total_data_num = res.body.length;
-                        console.log("!!length:"+this.data_list.length);
                     }).catch(function(error){
                         console.log(error);
                     })
@@ -323,26 +330,23 @@
                     then(function(res){
                         // console.log(this.msg.length);
                         this.msg = res.body;
-                        var num = 0;
-                        for (let index = 0; index < this.msg.length; index++) {
-                            const element = this.msg[index];
+                        this.msg.forEach(element=>{
                             if (element.iChangeperson==this.$store.state.rName || element.iCreator==(this.$store.state.rId+this.$store.state.rName)){
-                                this.tableData.push(element);
-                                num++;
-                            }if (num >= 4) {
-                                break;
-                            }
-                        };
-                        var num2=0;
-                        for (let index = 0; index < this.msg.length; index++) {
-                            const element = this.msg[index];
-                            if (element.iChangeperson==this.$store.state.rName || element.iCreator==(this.$store.state.rId+this.$store.state.rName)){
-                                num2++;
                                 this.data_list.push(element);
                             }
-                        };
-                        console.log("!!length:"+this.data_list.length);
-                        this.total_data_num = num2;
+                        });
+                        if (this.data_list.length<4) {
+                            for (let index = 0; index < this.data_list.length; index++) {
+                                const element = this.data_list[index];
+                                this.tableData.push(element);
+                            }
+                        }else{
+                            for (let index = 0; index < 4; index++) {
+                                const element = this.data_list[index];
+                                this.tableData.push(element);
+                            }
+                        }
+                        this.total_data_num = this.data_list.length;
                     }).catch(function(error){
                         console.log(error);
                     })
@@ -355,9 +359,6 @@
             // this.currentPage = currentPage;
             // console.log(currentPage);
                 if (this.$store.state.rUserid=='普通用户') {
-                    console.log("length:"+this.data_list.length);
-                    console.log("page num:"+currentPage);
-                    console.log("long:"+this.data_list.length%4);
                     this.tableData.splice(0,this.tableData.length);
                     for (let index = 0; index < 4; index++) {
                         // console.log("page:"+index);
@@ -370,9 +371,6 @@
                         }
                     }
                 }else{
-                    console.log("length:"+this.data_list.length);
-                    console.log("page num:"+currentPage);
-                    console.log("long:"+this.data_list.length%4);
                     this.tableData.splice(0,this.tableData.length);
                     for (let index = 0; index < 4; index++) {
                         // console.log("page:"+index);
@@ -387,6 +385,8 @@
                 }   
             },
             turnto_changeIssue(row){
+                console.log("true?");
+                console.log(row.iIssuestate !=='已关闭'&&row.iCreator==this.$store.state.rId+this.$store.state.rName);
                 this.$store.state.iCreator=row.iCreator;
                 this.$store.state.iTitle=row.iTitle;
                 this.$store.state.iNo=row.iNo;
@@ -406,7 +406,7 @@
                 // console.log(row.issue_state);
                 if (row.iIssuestate == '待验证') {
                 return 'warning-row';
-                } else if (row.iIssuestate == '关闭') {
+                } else if (row.iIssuestate == '已关闭') {
                 return 'success-row';
                 } else if (row.iIssuestate == '退回') {
                 return 'danger-row';
@@ -479,11 +479,18 @@
                                     }
                                     else{
                                         this.data_list.push(element);
+                                        // 时间清空
+                                        this.issueform.iCdate='';
+                                        this.issueform.iFinishtime=''
                                     }
                                 }
                             })
                         }else{
                             res.body.forEach(element=>{
+                                if (this.issueform.iCdate==null) {
+                                    this.issueform.iCdate=''
+                                }
+                                console.log("icdate:"+this.issueform.iCdate);
                                 if ((this.issueform.iCdate[0]!==undefined&&this.issueform.iCdate[1]!==undefined)&&(this.issueform.iFinishtime[0]==undefined&&this.issueform.iFinishtime[1]==undefined)) {
                                         console.log("error!");
                                         //先判断年份
@@ -528,6 +535,9 @@
                                     }
                                     else{
                                         this.data_list.push(element);
+                                        // 时间清空
+                                        this.issueform.iCdate='';
+                                        this.issueform.iFinishtime=''
                                     }
                             })
                         }
@@ -647,8 +657,8 @@
     }
     .img_body{
     position: relative;
-    background-image: url(~@/assets/hupo_daoying-002.jpg);
+    background-image: url(https://img.ivsky.com/img/tupian/pic/202005/03/hupo_daoying-002.jpg);
     background-size:cover;
-    height: 937px;
+    height: 100vh;
     }
 </style>

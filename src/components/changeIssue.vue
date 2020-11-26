@@ -1,11 +1,11 @@
 <template>
-<div>
+<div class="img_body">
     <div class="container">
         <div class="col-md-12 page_title">
             <el-form class="form-horizontal row" role="form" :rules="rules" :model="issueform" ref="issueform">
                 <label for="title" class="col-md-2 control-label"><h4>Issue题目</h4></label>
                 <el-form-item class="col-md-8" prop="iTitle" >
-                    <el-input  v-model="issueform.iTitle" id="title" placeholder="请输入题目"></el-input>
+                    <el-input  v-model="issueform.iTitle" id="title" placeholder="请输入题目" :readonly="readonly"></el-input>
                 </el-form-item>
             </el-form>
         </div>
@@ -20,10 +20,10 @@
                     <el-input v-model="issueform.iCdate" ReadOnly></el-input>
                 </el-form-item>
                 <el-form-item label="Issue类型" class="col-md-3" prop="iType">
-                    <el-input v-model="issueform.iType" id="issue_type"></el-input>
+                    <el-input v-model="issueform.iType" id="issue_type" :readonly="readonly"></el-input>
                 </el-form-item>
                 <el-form-item label="Issue等级" class="col-md-3" prop="iLevel">
-                    <el-select v-model="issueform.iLevel" placeholder="请选择Issue等级" :disabled="readonly">
+                    <el-select v-model="issueform.iLevel" placeholder="请选择Issue等级" :disabled="disabled">
                         <el-option label="最高" value="最高" name="iLevel"></el-option>
                         <el-option label="较高" value="较高" name="iLevel"></el-option>
                         <el-option label="一般" value="一般" name="iLevel"></el-option>
@@ -32,22 +32,22 @@
                 </el-form-item>
             
                 <el-form-item label="影响版本" class="col-md-3" prop="iVesion">
-                    <el-input v-model="issueform.iVesion" id="issue_version"></el-input>
+                    <el-input v-model="issueform.iVesion" id="issue_version" :readonly="readonly"></el-input>
                 </el-form-item>
-                <el-form-item label="计划修改时间" class="col-md-3" prop="iPlantime">
-                    <el-date-picker type="date"
-                    placeholder="选择日期" v-model="issueform.iPlantime" :picker-options="pickerOptions0" :readonly="readonly"></el-date-picker>
+                <el-form-item label="计划修改时间" class="col-md-4" prop="iPlantime">
+                    <el-date-picker
+                    placeholder="选择日期" v-model="issueform.iPlantime" :picker-options="pickerOptions0" :disabled="disabled"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="实际完成时间" class="col-md-3">
-                    <el-input v-model="issueform.iFinishtime" ReadOnly></el-input>
+                    <el-input v-model="issueform.iFinishtime" :readonly="readonly"></el-input>
                 </el-form-item>
             
                 <el-form-item label="重现步骤" class="col-md-12" prop="iReappear">
-                    <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" :rows="10"></el-input>
+                    <el-input type="textarea" v-model="issueform.iReappear" class="col-md-10" :rows="10" :readonly="readonly"></el-input>
                 </el-form-item>
 
-                <el-form-item label="解决方案" class="col-md-12" prop="iHandlemethod" v-if="show_flg">
-                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" :rows="10"></el-input>
+                <el-form-item label="解决方案" class="col-md-12" prop="iHandlemethod">
+                    <el-input type="textarea" v-model="issueform.iHandlemethod" class="col-md-10" :rows="8" ></el-input>
                 </el-form-item>
 
                 <el-form-item label="指派修改人" class="col-md-4">
@@ -55,8 +55,9 @@
                 </el-form-item>
                 <el-form-item class="col-md-12">
                     <el-button type="primary" @click="submitForm('issueform')" v-if="show_flg">提交验证</el-button>
-                    <el-button type="primary" @click="return_issue()" v-if="show_flg2">退回修改</el-button>
-                    <el-button type="primary" @click="agree_issue()" v-if="show_flg2">接受修改</el-button>
+                    <el-button type="primary" @click="return_issue()" v-if="show_flg2&&this.issueform.iIssuestate!=='已关闭'">退回修改</el-button>
+                    <el-button type="primary" @click="agree_issue()" v-if="show_flg2&&this.issueform.iIssuestate!=='已关闭'">接受修改</el-button>
+                    <el-button type="primary" @click="reopen()" v-if="show_flg2&&this.issueform.iIssuestate=='已关闭'">重新打开</el-button>
                     <el-button type="button" @click="goback()">返回</el-button>
                 </el-form-item>
             </el-form>
@@ -67,13 +68,22 @@
 
 <style scoped>
     .page_title{
-        margin:5% auto;
+        margin-bottom: 20px;
     }
     .el-textarea__inner{
         height:100px;
     }
     .body{
         margin:20px auto;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.3);
+    }
+    .img_body{
+    position: relative;
+    background-image: url(https://img.ivsky.com/img/tupian/pic/202005/03/hupo_daoying-002.jpg);
+    background-size:cover;
+    height: 100vh;
     }
 </style>
 
@@ -86,7 +96,8 @@ export default {
                 return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的 
             }
         },
-        readonly:'',
+        disabled:false,
+        readonly:false,
         show_flg:'',
         show_flg2:'',
         rNname:'',
@@ -153,7 +164,8 @@ export default {
                 document.getElementById("issue_type").readOnly=false;
                 document.getElementById("issue_version").readOnly=false;
                 document.getElementById("title").readOnly = false;
-                this.readonly =false;
+                this.readonly =true;
+                this.disabled =true;
             }else if(this.$store.state.rId+this.$store.state.rName==res.data.iCreator){
                 this.show_flg=false;
                 this.show_flg2=true;
@@ -161,11 +173,12 @@ export default {
                 document.getElementById("issue_version").readOnly=true;
                 document.getElementById("title").readOnly = true;
                 this.readonly = true;
+                this.disabled = true;
             }
-            console.log("user:"+this.$store.state.rName);
-            console.log("c:"+this.issueform.iCreator);
-            console.log("show_flg:"+this.show_flg);
-            console.log("show_flg2:"+this.show_flg2);
+            // console.log("user:"+this.$store.state.rName);
+            // console.log("c:"+this.issueform.iCreator);
+            // console.log("show_flg:"+this.show_flg);
+            // console.log("show_flg2:"+this.show_flg2);
         }).catch(function(error){
             console.log(error);
         })
@@ -174,11 +187,16 @@ export default {
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    this.issueform.iFinishtime=new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate();
-                    this.issueform.iIssuestate='待验证';
-                    this.$alert('Issue修改完成！', {
-                        confirmButtonText: '确定',
-                    }).then(() => {
+                    if (this.issueform.iIssuestate == '已关闭') {
+                            this.$alert('该Issue已关闭！', {
+                            confirmButtonText: '确定',
+                        })
+                    }else{
+                        this.issueform.iIssuestate='待验证';
+                        this.$alert('Issue修改完成！', {
+                            confirmButtonText: '确定',
+                        }).then(() => {
+                            console.log("！！！finishtime:"+this.issueform.iFinishtime);
                             this.$http.post('http://localhost:8080/issue/update',{
                             iNo:this.issueform.iNo,
                             iCreator:this.issueform.iCreator,
@@ -198,9 +216,46 @@ export default {
                             this.$router.go(-1),
                             )
                         })
+                    }
+                    // this.issueform.iFinishtime=new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate();
+                    
                 } else {
                     alert('error submit!!');
                 }
+            });
+        },
+        reopen(){
+            this.$http.post('http://localhost:8080/user/selectallSelective',{
+                rId:"",
+                rName:this.issueform.iChangeperson,
+            }).then(function(res){
+                this.msg=res.body;
+                this.msg.forEach(item=>{
+                    if (item.rName==this.issueform.iChangeperson && this.issueform.iIssuestate=='已关闭') {
+                        this.$message({
+                            type: 'success',
+                            message: '重新打开完成！',
+                        }),
+                        this.issueform.iIssuestate='待解决';
+                        console.log("rId:"+item.rId);
+                        this.$http.post('http://localhost:8080/user/update',{
+                            rId:item.rId,
+                            rMissue:parseInt(item.rMissue-1),
+                            }).then(
+                                this.$http.post('http://localhost:8080/issue/update',{
+                                iNo:this.issueform.iNo,
+                                iIssuestate:this.issueform.iIssuestate,
+                                }).then(
+                                    // updateFinishtime
+                                    this.$http.post('http://localhost:8080/issue/updateFinishtime',{
+                                        iNo:this.issueform.iNo
+                                    }).then(
+                                        this.$router.go(-1),
+                                    )
+                                ) 
+                            )  
+                    }
+                });
             });
         },
         agree_issue(){
@@ -210,25 +265,31 @@ export default {
             }).then(function(res){
                 this.msg=res.body;
                 this.msg.forEach(item=>{
-                    if (item.rName==this.issueform.iChangeperson && (this.issueform.iIssuestate!=='关闭'&& this.issueform.iIssuestate!=='待修改')) {
-                    console.log("该报表还未修改！");
-                    this.issueform.iIssuestate='关闭';
-                    this.$http.post('http://localhost:8080/user/update',{
-                        rId:item.rId,
-                        rMissue:parseInt(item.rMissue+1),
-                        }).then(
-                            this.$http.post('http://localhost:8080/issue/update',{
-                            iNo:this.issueform.iNo,
-                            iIssuestate:this.issueform.iIssuestate,
+                    if (item.rName==this.issueform.iChangeperson && (this.issueform.iIssuestate!=='已关闭'&& this.issueform.iIssuestate!=='待解决')) {
+                        this.$message({
+                            type: 'success',
+                            message: '接受修改完成！',
+                        }),
+                        this.issueform.iIssuestate='已关闭';
+                        console.log("rId:"+item.rId);
+                        this.$http.post('http://localhost:8080/user/update',{
+                            rId:item.rId,
+                            rMissue:parseInt(item.rMissue+1),
                             }).then(
-                            this.$router.go(-1),
-                            ) 
-                        )  
-                    }else if (this.issueform.iIssuestate =='关闭') {
-                        this.$alert('该报表已经是关闭状态！', {
+                                this.$http.post('http://localhost:8080/issue/update',{
+                                iNo:this.issueform.iNo,
+                                iIssuestate:this.issueform.iIssuestate,
+                                iFinishtime:new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate(),
+                                }).then(
+                                this.$router.go(-1),
+                                ) 
+                            )  
+                    }
+                    else if (this.issueform.iIssuestate =='已关闭') {
+                        this.$alert('该报表已经是已关闭状态！', {
                             confirmButtonText: '确定',
                         })
-                    }else if (this.issueform.iIssuestate=='待修改') {
+                    }else if (this.issueform.iIssuestate=='待解决') {
                         this.$alert('该报表还未修改！', {
                             confirmButtonText: '确定',
                         })
@@ -242,12 +303,12 @@ export default {
                 this.$alert('该报表已经是退回状态！', {
                     confirmButtonText: '确定',
                 })
-            }else if (this.issueform.iIssuestate =='待修改') {
+            }else if (this.issueform.iIssuestate =='待解决') {
                 this.$alert('该报表还未修改！', {
                     confirmButtonText: '确定',
                 })
-            }else if (this.issueform.iIssuestate=='关闭') {
-                this.$alert('该报表已经是关闭状态！', {
+            }else if (this.issueform.iIssuestate=='已关闭') {
+                this.$alert('该报表已经是已关闭状态！', {
                     confirmButtonText: '确定',
                 })
             }else{

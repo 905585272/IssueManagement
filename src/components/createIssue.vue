@@ -77,9 +77,9 @@
     }
     .img_body{
     position: relative;
-    background-image: url(~@/assets/hupo_daoying-002.jpg);
+    background-image: url(https://img.ivsky.com/img/tupian/pic/202005/03/hupo_daoying-002.jpg);
     background-size:cover;
-    height: 937px;
+    height: 100vh;
     }
 </style>
 
@@ -114,10 +114,11 @@ export default {
         },
         rules: {
             iTitle: [
+                { required: true,message: '请输入Issue标题',trigger: 'blur' },
                 { min: 0, max: 80, message: '长度在 0 到 80 个字符', trigger: 'blur' },
             ],
             iLevel:[
-                { required: true,message: '请选择计划时间',trigger: 'change' },
+                { required: true,message: '请选择Issue等级',trigger: 'change' },
             ],
             iType: [
                 { required: true, message: '请输入issue类型', trigger: 'blur' },
@@ -131,6 +132,7 @@ export default {
                 { type: 'date', required: true, message: '请选择计划时间', trigger: 'change' }
             ],
             iReappear:[
+                { required: true,message: '请输入重现步骤',trigger: 'blur' },
                 { min: 1, max: 2000, message: '长度在 1 到 2000 个字符', trigger: 'blur' },
             ]
         },

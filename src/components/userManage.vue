@@ -1,6 +1,6 @@
 <template>
     <div class="col-md-12" id="usermanage_body">
-        <div class="container">
+        <div class="container col-md-8">
             <div>
                 <div class="titlea col-md-12">
                     <h5 class="text-left"><b>账号管理</b></h5>
@@ -8,10 +8,10 @@
                 </div>
                 <div class="issue_menu col-md-9">
                     <el-form :model="userform" :rules="rules" ref="userform" class="row">
-                        <el-form-item label="用户ID" class="col-md-6" >
+                        <el-form-item label="用户ID" class="col-md-6" prop="rId">
                             <el-input v-model="userform.rId"></el-input>
                         </el-form-item>
-                        <el-form-item label="用户姓名" prop="iCreator" class="col-md-6" >
+                        <el-form-item label="用户姓名" prop="rName" class="col-md-6" >
                             <el-input v-model="userform.rName"></el-input>
                         </el-form-item>
                         <el-form-item class="issue_button">
@@ -27,7 +27,7 @@
                     <h5 class="text-left"><b>账号列表</b></h5>
                     <el-divider></el-divider>
                 </div>
-                <el-table class="col-md-8 issue_table"
+                <el-table class="col-md-9 issue_table"
                     :data="tableData"
                     style="width: 100%"
                     :default-sort="{prop: 'create_date', order: 'descending'}"
@@ -59,6 +59,10 @@
                     <el-table-column
                     prop="rState"
                     label="账号状态">
+                    </el-table-column>
+                    <el-table-column
+                    prop="rCreatetime"
+                    label="注册时间">
                     </el-table-column>
                     <el-table-column
                     prop="action"
@@ -111,6 +115,7 @@
                 callback();
             };
             return{
+                messgage:[],
                 push_index:0,
                 data_list:[],
                 total_data_num:1,
@@ -197,7 +202,9 @@
                     userdata.body.forEach(element=>{
                     //  this.tableData.push(element);
                         console.log("element:"+element.rName);
-                        this.data_list.push(element);
+                        if (element.rUserid!=='Admin') {
+                            this.data_list.push(element);
+                        }
                     })
                 }).then(function () {
                     console.log("data list:"+this.data_list);
@@ -220,6 +227,7 @@
                 })
             },
             reset(){
+                this.page_num=1;
                 this.data_list.splice(0,this.data_list.length);
                 this.tableData.splice(0,this.tableData.length);
                 this.userform.rId='';
@@ -259,11 +267,10 @@
             updateToManager(row){
                 if(row.rUserid == '普通用户'){
                     row.rUserid = '经理';
+                    this.messgage.push[row.rName+'，恭喜你被晋升为经理！'],
                     this.$http.post('http://localhost:8080/user/update',{
                     rId:row.rId,
                     rUserid:row.rUserid,
-                    }).then(function(resp){
-                        console.log(resp.data);
                     })
                 }
             },

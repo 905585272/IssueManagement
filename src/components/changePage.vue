@@ -10,8 +10,8 @@
                     <el-form-item label="登录ID：" prop="rId" class="col-md-8">
                         <el-input v-model="ruleForm.rId" disabled="disabled"></el-input>
                     </el-form-item>
-                    <el-form-item label="姓名：" prop="rName" class="col-md-8">
-                        <el-input v-model="ruleForm.rName" ></el-input>
+                    <el-form-item label="姓名：" class="col-md-8">
+                        <el-input v-model="ruleForm.rName" ReadOnly></el-input>
                     </el-form-item>
                     <el-form-item label="邮箱：" prop="rEmail" class="col-md-8">
                         <el-input v-model="ruleForm.rEmail" type="email"></el-input>
@@ -44,13 +44,13 @@
     }
     #change_body{
         width: 50%;
-        margin:10% auto;
+        margin:5% auto;
         border-radius: 15px;
         box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .5);
         background: rgba(255, 255, 255, 0.3);
     }
     .img_body{
-        background-image: url(~@/assets/gancaoduo-014.jpg);
+        background-image: url(https://img.ivsky.com/img/tupian/pic/202004/14/caihong.jpg);
         background-size:cover;
         height: 937px;
     }
@@ -125,12 +125,12 @@
                         { validator: checkEmail, trigger: 'blur' }
                     ],
                     rPwd: [
-                        { required: true,message: '请输入密码',trigger: 'blur' },
+                        // { required: true,message: '请输入密码',trigger: 'blur' },
                         { min: 8, max: 30, message: '长度在 8 到 30 个字符', trigger: 'blur' },
                         { validator: validatePass1, trigger: 'blur' }
                     ],
                     final_passwd: [
-                        { required: true,message: '请再次输入密码',trigger: 'blur' },
+                        // { required: true,message: '请再次输入密码',trigger: 'blur' },
                         { validator: validatePass2, trigger: 'blur' }
                     ]
                 }
@@ -162,6 +162,18 @@
                             //    }
                             // });
                                if (flag) {
+                                   if (this.ruleForm.rName=='') {
+                                       console.log("rName is null:"+this.$store.state.rName);
+                                       this.ruleForm.rName=this.$store.state.rName;
+                                   }
+                                   if (this.ruleForm.rEmail=='') {
+                                       console.log("rEmail is null:"+this.$store.state.rEmail);
+                                       this.ruleForm.rEmail=this.$store.state.rEmail;
+                                   }
+                                   if (this.ruleForm.rPwd=='') {
+                                       console.log("rPwd is null:"+this.$store.state.rPwd);
+                                       this.ruleForm.rPwd=this.$store.state.rPwd;
+                                   }
                                 this.$http.post('http://localhost:8080/user/update',{
                                 rId:this.ruleForm.rId,
                                 rName:this.ruleForm.rName,

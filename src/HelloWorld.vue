@@ -2,22 +2,6 @@
   <div class="container col-md-12 big_body">
    <el-container>
       <el-aside  class="aside_button col-md-3">
-      <template>
-        <div class="block">
-        <div style="height:7vh"></div>
-          <el-carousel trigger="click" height="30vh">
-            <el-carousel-item>
-              <img src="~@/assets/ibm.jpg" alt="IBM">
-            </el-carousel-item>
-            <el-carousel-item>
-              <img src="~@/assets/intel.jpg" alt="intel">
-            </el-carousel-item>
-            <el-carousel-item>
-              <img src="~@/assets/microsoft.jpg" alt="microsoft">
-            </el-carousel-item>
-          </el-carousel>
-        </div>
-      </template>
         <div class=" col-md-10" id="producer_list">
           <h4 class="white_text col-md-12">--------关于我们--------</h4>
           <ul class="col-md-8 center-block">
@@ -56,9 +40,7 @@
         <div class="content col-md-8 container">
           <div class="welcome col-md-12">
             <h1 v-if="helloTitle" class="white_text">欢迎使用Issue管理系统！</h1>
-            <h2 v-if="entersuccess&&this.$store.state.rUserid=='普通用户'" class="white_text"><i class="el-icon-user-solid white_text"></i>欢迎， {{rName}}</h2>
-            <h2 v-if="entersuccess&&this.$store.state.rUserid=='经理'" class="white_text"><i class="el-icon-user-solid white_text"></i>欢迎， {{rName}}<strong>经理</strong> </h2>
-            <h2 v-if="entersuccess&&this.$store.state.rUserid=='Admin'" style="color:rgba(255,0,0,0.5)" class="white_text"><i class="el-icon-user-solid white_text"></i>欢迎， 账户管理员</h2>
+            <h2 v-if="entersuccess" class="white_text"><i class="el-icon-user-solid white_text"></i>欢迎， {{rName}}</h2>
           </div>
           <div class="img col-md-12">
             <el-avatar shape="square" :size="100" :fit="fits" :src="squareUrl" v-if="iconable"></el-avatar>
@@ -66,11 +48,11 @@
             <el-avatar shape="square" :size="100" :fit="fits" :src="squareUrlThree" v-if="iconableThree"></el-avatar>
           </div>
           <div class="registerPage col-md-6" v-if="registerable">
-            <!-- <router-link to="/registerpage" class="white_text"> -->
-              <el-button type="primary" @click="register = true" class="white_text" round>
+            <router-link to="/registerpage" class="white_text">
+              <el-button type="primary" class="white_text" round>
                 <h5><i class="el-icon-s-help white_text"></i>注册</h5>
               </el-button>
-            <!-- </router-link> -->
+            </router-link>
           </div>
           <div class="enterPage col-md-6" v-if="enterable">
             <el-button @click="drawer = true" type="primary" class="white_text" round>
@@ -78,41 +60,41 @@
             </el-button>
           </div>
           <div class="quitbtn col-md-6" v-show="quitable">
-          <el-button type="primary" class="white_text" size="small" @click="quit" round>
+          <el-button type="info" class="white_text" size="small" @click="quit">
               <h5><i class="el-icon-right white_text"></i>退出当前账号</h5>
           </el-button>
           </div>
           <div class="changePage col-md-6" v-if="changeable">
             <router-link to="/changepage" class="white_text">
-              <el-button type="primary" class="white_text" size="small" round>
+              <el-button type="info" class="white_text" size="small">
                 <h5><i class="el-icon-s-tools white_text"></i>修改个人信息</h5>
               </el-button>
             </router-link>
           </div>
           <div class="createIssue col-md-6" v-if="createissue">
             <router-link to="/createissue" class="white_text">
-              <el-button type="primary" class="white_text" size="small" round>
+              <el-button type="info" class="white_text" size="small">
                 <h5><i class="el-icon-circle-plus white_text"></i>创建新Issue</h5>
               </el-button>
             </router-link>
           </div>
           <div class="issueList col-md-6" v-if="issuelist">
             <router-link to="/issueList" class="white_text">
-              <el-button type="primary" class="white_text" size="small" round>
+              <el-button type="info" class="white_text" size="small">
                 <h5><i class="el-icon-star-on white_text"></i>Issue列表</h5>
               </el-button>
             </router-link>
           </div>
           <div class="issueReport col-md-6" v-if="issuereport">
             <router-link to="/issueReport" class="white_text">
-              <el-button type="primary" class="white_text" size="small" round>
+              <el-button type="info" class="white_text" size="small">
                 <h5><i class="el-icon-star-on white_text"></i>Issue报表</h5>
               </el-button>
             </router-link>
           </div>
           <div class="userManage col-md-6" v-if="admin_flg">
-            <router-link to="/userManage" class="white_text">
-              <el-button type="danger" class="white_text" size="small" round>
+            <router-link to="/userManage" class="white_text" style="color:#F56C6C">
+              <el-button type="info" class="white_text" size="small">
                 <h5><i class="el-icon-loading"></i>账号管理</h5>
               </el-button>
             </router-link>
@@ -121,6 +103,7 @@
       </div>
     </el-container>
     <el-drawer id="enter_body"
+      title="用户登陆"
       :visible.sync="drawer"
       :with-header="false"
       :direction="direction"
@@ -146,124 +129,24 @@
         </div>   
       </div>
     </el-drawer>
-    <el-drawer id="enter_body"
-      :visible.sync="register"
-      :with-header="false"
-      direction="ltr"
-      :before-close="handleCloseRegister">
-      >
-      <div class="container">
-        <div >
-            <div id="change_info_title">
-                <h5 class="text-left"><b>用户注册</b></h5>
-                <hr>
-            </div>
-            <div id="change_body">
-              <el-form :model="regsterruleForm" :rules="regesterules" ref="regsterruleForm" class="demo-ruleForm">
-                  <el-form-item label="登录ID：" prop="rId" class="col-md-8">
-                      <el-input v-model="regsterruleForm.rId"></el-input>
-                  </el-form-item>
-                  <el-form-item label="姓名：" prop="rName" class="col-md-8">
-                      <el-input v-model="regsterruleForm.rName" ></el-input>
-                  </el-form-item>
-                  <el-form-item label="邮箱：" prop="rEmail" class="col-md-8">
-                      <el-input v-model="regsterruleForm.rEmail" type="email"></el-input>
-                  </el-form-item>
-                  <el-form-item label="输入密码：" prop="rPwd" class="col-md-8">
-                      <el-input v-model="regsterruleForm.rPwd" show-password></el-input>
-                  </el-form-item>
-                  <el-form-item label="确认密码：" prop="final_passwd" class="col-md-8">
-                      <el-input v-model="regsterruleForm.final_passwd" show-password></el-input>
-                  </el-form-item>
-                  <el-form-item>
-                  <el-button type="primary" @click="registerForm('regsterruleForm')">确认</el-button>
-                  </el-form-item>
-              </el-form>
-            </div>
-        </div>   
-      </div>
-    </el-drawer>
+
   </div>
 </template>
 
 <script>
 export default {
   data(){
-    var validatePass1 = (rule, value, callback) => {
-          if (value !== '') { 
-              if (!/^(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*?[_\-@&=!])[a-zA-Z_\-@&=!0-9]+.{7,30}$/.test(value)){
-                  callback(new Error('密码必须包含大小写和特殊字符(_-@&=!)，且在8-30位之间'));
-                  }
-              }
-              else {
-              callback();
-              }
-          callback();
-      };
-      var validatePass2 = (rule, value, callback) => {
-          if (value !== this.regsterruleForm.rPwd) {
-          callback(new Error('两次输入密码不一致!'));
-          }
-            else {
-          callback();
-          }
-          callback();
-      };
-      var checkEmail = (rule, value, callback) => {
-            if (value === '') {
-          callback(new Error('请正确填写邮箱'));
-          } else {
-              if (value !== '') { 
-              var reg=/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-                  if(!reg.test(value)){
-                  callback(new Error('请输入有效的邮箱'));
-                  }
-              }
-          callback();
-          }
-      };
-      var checkChinese = (rule, value, callback) => {
-          if (value) {
-              if (!/^[\u2E80-\u9FFF]+$/.test(value)) {
-              callback(new Error('请输入汉字!'));
-              } else {
-              callback();
-              }
-          }
-          callback();
-      }
     return{
-      msg:[],
       fits:'fill',
       squareUrl: "https://wx2.sinaimg.cn/mw690/0061Qq8Vly1gh7qredom7j30jg0jg0ur.jpg",
       squareUrlTwo:"https://wx4.sinaimg.cn/mw690/0061Qq8Vly1gh7qrf1b2bj30jg0jg75z.jpg",
       squareUrlThree:"https://wx1.sinaimg.cn/mw690/0061Qq8Vly1gh7qrdspvsj30jg0jg0uo.jpg",
       timer:'',
       time:'',
-      regsterruleForm:{
-        rId:'',
-        rPwd:'',
-        rName:'',
-        rEmail:'',
-        final_passwd:'',
-        rUserid:'普通用户',
-        rState:'激活',
-        rCissue: 0,
-        rRissue: 0,
-        rMissue: 0,
-        rCreatetime:'',
-      },
       ruleForm:{
         rId:'',
         rPwd:'',
         rName:'',
-        rEmail:'',
-        final_passwd:'',
-        rUserid:'普通用户',
-        rState:'激活',
-        rCissue: 0,
-        rRissue: 0,
-        rMissue: 0
       },
       rules: {
           rId: [
@@ -271,37 +154,11 @@ export default {
               { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
           ],
           rPwd: [
-              { required: true,message: '请输入密码',trigger: 'blur' },
-              { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
-          ],
-      },
-      regesterules: {
-          rId: [
-              { required: true, message: '请输入ID', trigger: 'blur' },
-              { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
-          ],
-          rName: [
-              { required: true, message: '请输入名字', trigger: 'blur' },
-              { min: 1, max: 20, message: '长度在 1 到 20 个汉字', trigger: 'blur' },
-              { validator: checkChinese, trigger: 'blur' }
-          ],
-          rEmail: [
-              { required: true, message: '请输入邮箱', trigger: 'blur' },
-              { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
-              { validator: checkEmail, trigger: 'blur' }
-          ],
-          rPwd: [
-              { required: true,message: '请输入密码',trigger: 'blur' },
-              { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
-              { validator: validatePass1, trigger: 'blur' }
-          ],
-          final_passwd: [
-              { required: true,message: '请再次输入密码',trigger: 'blur' },
-              { validator: validatePass2, trigger: 'blur' }
+              { required: true, message: '请输入密码',trigger: 'blur' },
+              { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
           ]
       },
       admin_flg:false,
-      register:false,
       drawer: false,
       direction: 'rtl',
       calendar_data: new Date(),
@@ -362,22 +219,19 @@ export default {
       this.$store.state.createissue = false;
       this.$store.state.issuereport = true;
       this.$store.state.issuelist = true;
-      this.$store.state.quitable = true;
       // console.log('是经理');
     }else if(this.$store.state.rUserid == '普通用户'){
       this.$store.state.changeable = true;
       this.$store.state.createissue = true;
       this.$store.state.issuereport = false;
       this.$store.state.issuelist = true;
-      this.$store.state.quitable = true;
       // console.log('不是经理');
-    }else if (this.$store.state.rUserid == 'Admin') {
+    }else if (this.$store.state.rUserid == 'admin') {
       this.admin_flg=true;
       this.$store.state.changeable = false;
       this.$store.state.createissue = false;
       this.$store.state.issuelist = false;
       this.$store.state.issuereport =false;
-      this.$store.state.quitable = true;  
     }
   },
   methods:{
@@ -393,25 +247,6 @@ export default {
       this.$store.state.rCissue = '',
       this.$store.state.rRissue = '',
       this.$store.state.rMissue = '',
-      //退出登录清空用户登录数据
-      this.ruleForm.rId='',
-      this.ruleForm.rName='',
-      this.ruleForm.rEmail='',
-      this.ruleForm.rPwd='',
-      this.ruleForm.rUserid='',
-      this.ruleForm.rState='',
-      this.ruleForm.rCissue='',
-      this.ruleForm.rMissue='',
-      //退出登录清空用户注册数据
-      this.regsterruleForm.rId='',
-      this.regsterruleForm.rName='',
-      this.regsterruleForm.rEmail='',
-      this.regsterruleForm.rPwd='',
-      this.regsterruleForm.rUserid='',
-      this.regsterruleForm.rState='',
-      this.regsterruleForm.rCissue='',
-      this.regsterruleForm.rMissue='',
-      this.regsterruleForm.final_passwd='',
       this.$store.state.enterable = true,
       this.$store.state.entersuccess = false,
       this.$store.state.registerable = true,
@@ -430,114 +265,15 @@ export default {
       this.$confirm('确认取消登陆？')
         .then(() => {
           done();
-          //复位
-          this.regsterruleForm.rId='',
-          this.regsterruleForm.rPwd=''
         })
         .catch(() => {});
     },
-    handleCloseRegister(done) {
-      this.$confirm('确认取消注册？')
-        .then(() => {
-          done();
-          //复位
-          this.regsterruleForm.rId='',
-          this.regsterruleForm.rPwd='',
-          this.regsterruleForm.rName='',
-          this.regsterruleForm.rEmail='',
-          this.regsterruleForm.final_passwd=''
-        })
-        .catch(() => {});
-    },
-    registerForm(formName) {
-      this.$refs[formName].validate((valid) => {
-          console.log("data is posting!");
-          if (valid) {
-              console.log(this.regsterruleForm.rId); 
-              this.$http.get('http://localhost:8080/user/selectall').
-              then(function(res){
-                  this.msg = res.body;
-                  console.log(this.msg.length);
-                  var flag=true;
-                  this.msg.forEach(item=>{
-                      if (item.rId==this.regsterruleForm.rId) {
-                          flag=false;
-                          this.$alert('ID重复!', {
-                          confirmButtonText: '确定',
-                          })
-                      }
-                  });
-                    if (flag) {
-                      this.regsterruleForm.rCreatetime=new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate(),
-                      // console.log("creat time:"+this.regsterruleForm.rCreatetime);
-                      this.$http.post('http://localhost:8080/user/insert',{
-                      rId:this.regsterruleForm.rId,
-                      rName:this.regsterruleForm.rName,
-                      rEmail:this.regsterruleForm.rEmail,
-                      rPwd:this.regsterruleForm.rPwd,
-                      rUserid:this.regsterruleForm.rUserid,
-                      rState:this.regsterruleForm.rState,
-                      rCissue: this.regsterruleForm.rCissue,
-                      rRissue: this.regsterruleForm.rRissue,
-                      rMissue: this.regsterruleForm.rMissue,
-                      rCreatetime: this.regsterruleForm.rCreatetime,
-                  }).then(function(){
-                      // console.log("!"+resp);
-                      this.$alert('用户注册成功！', {
-                          confirmButtonText: '确定',
-                      }).then(() => {
-                        this.$store.state.enterable = false,
-                        this.$store.state.entersuccess = true,
-                        this.$store.state.registerable = false,
-                        this.$store.state.issuereport = true,
-                        this.$store.state.changeable = true,
-                        this.$store.state.helloTitle = false,
-                        // 全局用户数据同步
-                        this.$store.state.rId = this.regsterruleForm.rId,
-                        this.$store.state.rName = this.regsterruleForm.rName,
-                        this.$store.state.rEmail = this.regsterruleForm.rEmail,
-                        this.$store.state.rPwd = this.regsterruleForm.rPwd,
-                        this.$store.state.rUserid = '普通用户',
-                        this.$store.state.rState = this.regsterruleForm.rState,
-                        this.$store.state.rCissue = this.regsterruleForm.rCissue,
-                        this.$store.state.rRissue = this.regsterruleForm.rRissue,
-                        this.$store.state.rMissue = this.regsterruleForm.rMissue,
-                        this.register=false;
-                        this.$store.state.changeable = true;
-                        this.$store.state.createissue = true;
-                        this.$store.state.issuereport = false;
-                        this.$store.state.issuelist = true;
-                        this.$store.state.iconableTwo = true;
-                        this.$store.state.helloTitle = false;
-                        this.$store.state.quitable = true,
-                        this.$message({
-                            type: 'success',
-                            message: '欢迎!'+this.$store.state.rName,
-                          },
-                          );
-                      })
-                  }).catch(function(error){
-                      console.log(error);
-                  })
-                      }
-              }).catch(function(error){
-                  console.log(error);
-              })
-              
-          } else {
-              alert('error submit!!');
-          }
-      });
-  },
     submitForm(ruleForm) {
     this.$refs[ruleForm].validate((valid) => {
         if (valid) {
             this.$http.get('http://localhost:8080/user/selectbyid/'+this.ruleForm.rId).
             then(function(res){
-                console.log("get:"+res.data.rPwd);
-                console.log("input:"+this.ruleForm.rPwd);
-                console.log("true?");
-                console.log(this.ruleForm.rPwd==res.data.rPwd);
+                console.log(res.data);
                 if(res.data===1){ 
                     this.$alert('用户不存在!', {
                         confirmButtonText: '确定',
@@ -574,7 +310,6 @@ export default {
                         this.$store.state.issuereport = true;
                         this.$store.state.issuelist = true;
                         this.$store.state.iconable = true;
-                        this.$store.state.helloTitle = false;
                         // console.log('是经理');
                       }else if(this.$store.state.rUserid == '普通用户'){
                         this.$store.state.changeable = true;
@@ -582,27 +317,26 @@ export default {
                         this.$store.state.issuereport = false;
                         this.$store.state.issuelist = true;
                         this.$store.state.iconableTwo = true;
-                        this.$store.state.helloTitle = false;
                         // console.log('不是经理');
-                      }else if (this.$store.state.rUserid == 'Admin') {
+                      }else if (this.$store.state.rUserid == 'admin') {
                         this.admin_flg=true;
                         this.$store.state.changeable = false;
                         this.$store.state.createissue = false;
                         this.$store.state.issuelist = false;
                         this.$store.state.issuereport =false;
                         this.$store.state.iconableThree = true;
-                        this.$store.state.helloTitle = false;
                       }
                     this.$alert('欢迎使用', {
                         confirmButtonText: '确定',
                     }).then(() => {
-                          this.$message({
-                              type: 'success',
-                              message: '欢迎!'+res.data.rName,
-                          },
-                        );
-                      });
-                    }else{
+                            this.$message({
+                                type: 'success',
+                                message: '欢迎!'+res.data.rName,
+                            },
+                            );
+                        });
+                    }
+                    else{
                         this.$alert('密码错误!', {
                         confirmButtonText: '确定',
                         })
@@ -626,26 +360,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-  .el-carousel__item h3 {
-    color: #475669;
-    font-size: 14px;
-    opacity: 0.75;
-    line-height: 150px;
-    margin: 0;
-  }
-  .el-carousel__item:nth-child(2n) {
-     background-color: #99a9bf;
-  }
-  .el-carousel__item:nth-child(2n+1) {
-     background-color: #d3dce6;
-  }
-  img{
-  width:100%;
-  height:100%;
-  }
-  #change_body{
-        margin:15% auto;
-    }
   .big_body{
     height: 100vh;
     position: relative;
