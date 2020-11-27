@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ibm.issue.Mapper.IssueMapper">
+  <resultMap id="BaseResultMap" type="com.ibm.issue.Entity.Issue">
+    <id column="i_no" jdbcType="INTEGER" property="iNo" />
+    <result column="i_title" jdbcType="VARCHAR" property="iTitle" />
+    <result column="i_cdate" jdbcType="TIMESTAMP" property="iCdate" />
+    <result column="i_type" jdbcType="VARCHAR" property="iType" />
+    <result column="i_level" jdbcType="VARCHAR" property="iLevel" />
+    <result column="i_vesion" jdbcType="VARCHAR" property="iVesion" />
+    <result column="i_creator" jdbcType="VARCHAR" property="iCreator" />
+    <result column="i_changeperson" jdbcType="VARCHAR" property="iChangeperson" />
+    <result column="i_issuestate" jdbcType="VARCHAR" property="iIssuestate" />
+    <result column="i_plantime" jdbcType="DATE" property="iPlantime" />
+    <result column="i_finishtime" jdbcType="DATE" property="iFinishtime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.ibm.issue.Entity.IssueWithBLOBs">
+    <result column="i_reappear" jdbcType="LONGVARCHAR" property="iReappear" />
+    <result column="i_handlemethod" jdbcType="LONGVARCHAR" property="iHandlemethod" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    i_no, i_title, i_cdate, i_type, i_level, i_vesion, i_creator, i_changeperson, i_issuestate, 
+    i_plantime, i_finishtime
+  </sql>
+  <sql id="Blob_Column_List">
+    i_reappear, i_handlemethod
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from issue
+    where i_no = #{iNo,jdbcType=INTEGER}
+  </select>
+  <select id="selectall"  resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from issue
+  </select>
+
+  <select id="selectallbyname"  parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from issue
+    <where>
+    1=1
+      <if test="_parameter != null">
+        and i_creator like concat('%',#{iCreator},'%')
+      </if>
+      <if test="_parameter != null">
+        or i_changeperson  like concat('%',#{iCreator},'%')
+      </if>
+    </where>
+    having
+    1=1
+    <if test="_parameter != null">
+      and i_creator like concat('%',#{iCreator},'%')
+    </if>
+
+  </select>
+
+  <select id="selectallSelective" parameterType="com.ibm.issue.Entity.IssueWithBLOBs" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />,
+    <include refid="Blob_Column_List" />
+
+    from issue
+    <where>
+       1=1
+      <if test="iIssuestate != null">
+       and i_issuestate= #{iIssuestate,jdbcType=VARCHAR}
+      </if>
+      <if test="iNo != null">
+       and  i_no like concat('%',#{iNo,jdbcType=INTEGER},'%')
+
+      </if>
+      <if test="iCreator != null">
+       and i_creator like concat('%',#{iCreator,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="iChangeperson != null">
+       and i_changeperson  like concat('%',#{iChangeperson,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+
+
+  </select>
+
+
+  <select id="selectallSelectivePage" parameterType="com.ibm.issue.Entity.IssueWithBLOBs" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />,
+    <include refid="Blob_Column_List" />
+
+    from issue
+    <where>
+      1=1
+      <if test="iIssuestate != null">
+        and i_issuestate= #{iIssuestate,jdbcType=VARCHAR}
+      </if>
+      <if test="iNo != null">
+        and  i_no like concat('%',#{iNo,jdbcType=INTEGER},'%')
+
+      </if>
+      <if test="iCreator != null">
+        and i_creator like concat('%',#{iCreator,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="iChangeperson != null">
+        and i_changeperson  like concat('%',#{iChangeperson,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+
+
+  </select>
+
+
+  <update id="updatefinishtime" parameterType="com.ibm.issue.Entity.IssueWithBLOBs">
+    update issue set
+
+        i_finishtime = null
+
+    where i_no = #{iNo,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="selectallSelectiveInt" parameterType="com.ibm.issue.Entity.IssueWithBLOBs" resultType="java.lang.Integer">
+    select
+    count(*)
+    from issue
+    <where>
+      1=1
+      <if test="iIssuestate != null">
+        and i_issuestate= #{iIssuestate,jdbcType=VARCHAR}
+      </if>
+      <if test="iNo != null">
+        and  i_no like concat('%',#{iNo,jdbcType=INTEGER},'%')
+
+      </if>
+      <if test="iCreator != null">
+        and i_creator like concat('%',#{iCreator,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="iChangeperson != null">
+        and i_changeperson  like concat('%',#{iChangeperson,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+  </select>
+
+  <select id="selectcount" resultType="java.lang.Integer">
+    select
+    count(*)
+    from issue
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from issue
+    where i_no = #{iNo,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ibm.issue.Entity.IssueWithBLOBs">
+    insert into issue (i_no, i_title, i_cdate, 
+      i_type, i_level, i_vesion, 
+      i_creator, i_changeperson, i_issuestate, 
+      i_plantime, i_finishtime, i_reappear, 
+      i_handlemethod)
+    values (#{iNo,jdbcType=INTEGER}, #{iTitle,jdbcType=VARCHAR}, #{iCdate,jdbcType=TIMESTAMP}, 
+      #{iType,jdbcType=VARCHAR}, #{iLevel,jdbcType=VARCHAR}, #{iVesion,jdbcType=VARCHAR}, 
+      #{iCreator,jdbcType=VARCHAR}, #{iChangeperson,jdbcType=VARCHAR}, #{iIssuestate,jdbcType=VARCHAR}, 
+      #{iPlantime,jdbcType=DATE}, #{iFinishtime,jdbcType=DATE}, #{iReappear,jdbcType=LONGVARCHAR}, 
+      #{iHandlemethod,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ibm.issue.Entity.IssueWithBLOBs">
+    insert into issue
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="iNo != null">
+        i_no,
+      </if>
+      <if test="iTitle != null">
+        i_title,
+      </if>
+      <if test="iCdate != null">
+        i_cdate,
+      </if>
+      <if test="iType != null">
+        i_type,
+      </if>
+      <if test="iLevel != null">
+        i_level,
+      </if>
+      <if test="iVesion != null">
+        i_vesion,
+      </if>
+      <if test="iCreator != null">
+        i_creator,
+      </if>
+      <if test="iChangeperson != null">
+        i_changeperson,
+      </if>
+      <if test="iIssuestate != null">
+        i_issuestate,
+      </if>
+      <if test="iPlantime != null">
+        i_plantime,
+      </if>
+      <if test="iFinishtime != null">
+        i_finishtime,
+      </if>
+      <if test="iReappear != null">
+        i_reappear,
+      </if>
+      <if test="iHandlemethod != null">
+        i_handlemethod,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="iNo != null">
+        #{iNo,jdbcType=INTEGER},
+      </if>
+      <if test="iTitle != null">
+        #{iTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="iCdate != null">
+        #{iCdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="iType != null">
+        #{iType,jdbcType=VARCHAR},
+      </if>
+      <if test="iLevel != null">
+        #{iLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="iVesion != null">
+        #{iVesion,jdbcType=VARCHAR},
+      </if>
+      <if test="iCreator != null">
+        #{iCreator,jdbcType=VARCHAR},
+      </if>
+      <if test="iChangeperson != null">
+        #{iChangeperson,jdbcType=VARCHAR},
+      </if>
+      <if test="iIssuestate != null">
+        #{iIssuestate,jdbcType=VARCHAR},
+      </if>
+      <if test="iPlantime != null">
+        #{iPlantime,jdbcType=DATE},
+      </if>
+      <if test="iFinishtime != null">
+        #{iFinishtime,jdbcType=DATE},
+      </if>
+      <if test="iReappear != null">
+        #{iReappear,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="iHandlemethod != null">
+        #{iHandlemethod,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ibm.issue.Entity.IssueWithBLOBs">
+    update issue
+    <set>
+      <if test="iTitle != null">
+        i_title = #{iTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="iCdate != null">
+        i_cdate = #{iCdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="iType != null">
+        i_type = #{iType,jdbcType=VARCHAR},
+      </if>
+      <if test="iLevel != null">
+        i_level = #{iLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="iVesion != null">
+        i_vesion = #{iVesion,jdbcType=VARCHAR},
+      </if>
+      <if test="iCreator != null">
+        i_creator = #{iCreator,jdbcType=VARCHAR},
+      </if>
+      <if test="iChangeperson != null">
+        i_changeperson = #{iChangeperson,jdbcType=VARCHAR},
+      </if>
+      <if test="iIssuestate != null">
+        i_issuestate = #{iIssuestate,jdbcType=VARCHAR},
+      </if>
+      <if test="iPlantime != null">
+        i_plantime = #{iPlantime,jdbcType=DATE},
+      </if>
+      <if test="iFinishtime != null">
+        i_finishtime = #{iFinishtime,jdbcType=DATE},
+      </if>
+      <if test="iReappear != null">
+        i_reappear = #{iReappear,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="iHandlemethod != null">
+        i_handlemethod = #{iHandlemethod,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where i_no = #{iNo,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ibm.issue.Entity.IssueWithBLOBs">
+    update issue
+    set i_title = #{iTitle,jdbcType=VARCHAR},
+      i_cdate = #{iCdate,jdbcType=TIMESTAMP},
+      i_type = #{iType,jdbcType=VARCHAR},
+      i_level = #{iLevel,jdbcType=VARCHAR},
+      i_vesion = #{iVesion,jdbcType=VARCHAR},
+      i_creator = #{iCreator,jdbcType=VARCHAR},
+      i_changeperson = #{iChangeperson,jdbcType=VARCHAR},
+      i_issuestate = #{iIssuestate,jdbcType=VARCHAR},
+      i_plantime = #{iPlantime,jdbcType=DATE},
+      i_finishtime = #{iFinishtime,jdbcType=DATE},
+      i_reappear = #{iReappear,jdbcType=LONGVARCHAR},
+      i_handlemethod = #{iHandlemethod,jdbcType=LONGVARCHAR}
+    where i_no = #{iNo,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ibm.issue.Entity.Issue">
+    update issue
+    set i_title = #{iTitle,jdbcType=VARCHAR},
+      i_cdate = #{iCdate,jdbcType=TIMESTAMP},
+      i_type = #{iType,jdbcType=VARCHAR},
+      i_level = #{iLevel,jdbcType=VARCHAR},
+      i_vesion = #{iVesion,jdbcType=VARCHAR},
+      i_creator = #{iCreator,jdbcType=VARCHAR},
+      i_changeperson = #{iChangeperson,jdbcType=VARCHAR},
+      i_issuestate = #{iIssuestate,jdbcType=VARCHAR},
+      i_plantime = #{iPlantime,jdbcType=DATE},
+      i_finishtime = #{iFinishtime,jdbcType=DATE}
+    where i_no = #{iNo,jdbcType=INTEGER}
+  </update>
+</mapper>

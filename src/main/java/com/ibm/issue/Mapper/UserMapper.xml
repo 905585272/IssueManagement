@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ibm.issue.Mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.ibm.issue.Entity.User">
+    <id column="r_id" jdbcType="VARCHAR" property="rId" />
+    <result column="r_name" jdbcType="VARCHAR" property="rName" />
+    <result column="r_email" jdbcType="VARCHAR" property="rEmail" />
+    <result column="r_pwd" jdbcType="VARCHAR" property="rPwd" />
+    <result column="r_userid" jdbcType="VARCHAR" property="rUserid" />
+    <result column="r_state" jdbcType="VARCHAR" property="rState" />
+    <result column="r_cissue" jdbcType="INTEGER" property="rCissue" />
+    <result column="r_rissue" jdbcType="INTEGER" property="rRissue" />
+    <result column="r_missue" jdbcType="INTEGER" property="rMissue" />
+    <result column="r_createtime" jdbcType="DATE" property="rCreatetime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    r_id, r_name, r_email, r_pwd, r_userid, r_state, r_cissue, r_rissue, r_missue,r_createtime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where r_id = #{rId,jdbcType=VARCHAR}
+  </select>
+
+
+
+  <select id="selectAll"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+
+  </select>
+
+  <select id="selectAllSelective" parameterType="com.ibm.issue.Entity.User" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+    <where>
+      1=1
+      <if test="rName != null">
+       and r_name like concat('%',#{rName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="rId != null">
+        and r_id like concat('%',#{rId,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+
+  </select>
+
+
+  <select id="selectAllSelectivePage" parameterType="com.ibm.issue.Entity.User" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+    <where>
+      1=1
+      <if test="rName != null">
+        and r_name like concat('%',#{rName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="rId != null">
+        and r_id like concat('%',#{rId,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+
+  </select>
+
+  <select id="selectissuecount" resultType="java.lang.Integer">
+    select
+    count(*)
+    from User
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from user
+    where r_id = #{rId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ibm.issue.Entity.User">
+    insert into user (r_id, r_name, r_email, 
+      r_pwd, r_userid, r_state, 
+      r_cissue, r_rissue, r_missue,r_createtime
+      )
+    values (#{rId,jdbcType=VARCHAR}, #{rName,jdbcType=VARCHAR}, #{rEmail,jdbcType=VARCHAR}, 
+      #{rPwd,jdbcType=VARCHAR}, #{rUserid,jdbcType=VARCHAR}, #{rState,jdbcType=VARCHAR}, 
+      #{rCissue,jdbcType=INTEGER}, #{rRissue,jdbcType=INTEGER}, #{rMissue,jdbcType=INTEGER},#{rCreatetime,jdbcType=DATE}
+      )
+  </insert>
+
+  <insert id="insertuser" parameterType="com.ibm.issue.Entity.User">
+    insert into user (r_id, r_name, r_email,
+      r_pwd
+      )
+    values (#{rId,jdbcType=VARCHAR}, #{rName,jdbcType=VARCHAR}, #{rEmail,jdbcType=VARCHAR},
+      #{rPwd,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ibm.issue.Entity.User">
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="rId != null">
+        r_id,
+      </if>
+      <if test="rName != null">
+        r_name,
+      </if>
+      <if test="rEmail != null">
+        r_email,
+      </if>
+      <if test="rPwd != null">
+        r_pwd,
+      </if>
+      <if test="rUserid != null">
+        r_userid,
+      </if>
+      <if test="rState != null">
+        r_state,
+      </if>
+      <if test="rCissue != null">
+        r_cissue,
+      </if>
+      <if test="rRissue != null">
+        r_rissue,
+      </if>
+      <if test="rMissue != null">
+        r_missue,
+      </if>
+      <if test="rCreatetime != null">
+        r_createtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="rId != null">
+        #{rId,jdbcType=VARCHAR},
+      </if>
+      <if test="rName != null">
+        #{rName,jdbcType=VARCHAR},
+      </if>
+      <if test="rEmail != null">
+        #{rEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="rPwd != null">
+        #{rPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="rUserid != null">
+        #{rUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="rState != null">
+        #{rState,jdbcType=VARCHAR},
+      </if>
+      <if test="rCissue != null">
+        #{rCissue,jdbcType=INTEGER},
+      </if>
+      <if test="rRissue != null">
+        #{rRissue,jdbcType=INTEGER},
+      </if>
+      <if test="rMissue != null">
+        #{rMissue,jdbcType=INTEGER},
+      </if>
+      <if test="rCreatetime != null">
+        #{rCreatetime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ibm.issue.Entity.User">
+    update user
+    <set>
+      <if test="rName != null">
+        r_name = #{rName,jdbcType=VARCHAR},
+      </if>
+      <if test="rEmail != null">
+        r_email = #{rEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="rPwd != null">
+        r_pwd = #{rPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="rUserid != null">
+        r_userid = #{rUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="rState != null">
+        r_state = #{rState,jdbcType=VARCHAR},
+      </if>
+      <if test="rCissue != null">
+        r_cissue = #{rCissue,jdbcType=INTEGER},
+      </if>
+      <if test="rRissue != null">
+        r_rissue = #{rRissue,jdbcType=INTEGER},
+      </if>
+      <if test="rMissue != null">
+        r_missue = #{rMissue,jdbcType=INTEGER},
+      </if>
+      <if test="rCreatetime != null">
+        r_createtime = #{rCreatetime,jdbcType=DATE},
+      </if>
+    </set>
+    where r_id = #{rId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ibm.issue.Entity.User">
+    update user
+    set r_name = #{rName,jdbcType=VARCHAR},
+      r_email = #{rEmail,jdbcType=VARCHAR},
+      r_pwd = #{rPwd,jdbcType=VARCHAR},
+      r_userid = #{rUserid,jdbcType=VARCHAR},
+      r_state = #{rState,jdbcType=VARCHAR},
+      r_cissue = #{rCissue,jdbcType=INTEGER},
+      r_rissue = #{rRissue,jdbcType=INTEGER},
+      r_missue = #{rMissue,jdbcType=INTEGER},
+      r_createtime = #{rCreatetime,jdbcType=DATE}
+    where r_id = #{rId,jdbcType=VARCHAR}
+  </update>
+</mapper>
